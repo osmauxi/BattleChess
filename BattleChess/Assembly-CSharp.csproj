@@ -60,7 +60,16 @@
     <Analyzer Include="D:\Unity\2022.3.44f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\NewBehaviourScript.cs" />
+    <Compile Include="Assets\Scripts\MouseWorld.cs" />
+    <Compile Include="Assets\Scripts\Unit\UnitActionSystem.cs" />
+    <Compile Include="Assets\Scripts\Grid\GridSettings.cs" />
+    <Compile Include="Assets\Scripts\Turn_base\Turn_basedmanager.cs" />
+    <Compile Include="Assets\Scripts\Unit\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Grid\GridMoveCostSet.cs" />
+    <Compile Include="Assets\Scripts\Grid\GridAchieve.cs" />
+    <Compile Include="Assets\Scripts\Unit\Unit.cs" />
+    <Compile Include="Assets\Scripts\Unit\Entity.cs" />
+    <Compile Include="Assets\Scripts\Grid\TileMapController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
