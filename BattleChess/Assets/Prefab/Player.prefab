@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4059143542100784912}
   - component: {fileID: 6121519382286470403}
   - component: {fileID: 8457101984605488318}
-  - component: {fileID: 8152116706050710337}
   - component: {fileID: 8662255331302046464}
+  - component: {fileID: 6631311647495927192}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -85,7 +85,35 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &8152116706050710337
+--- !u!114 &8662255331302046464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7112353593753327210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90e97ade62bf14cb4556ce29aa1e5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasActed: 0
+  gridPosition: {x: 0, y: 0}
+  MaxMovepoint: 0
+  movePoint: 5
+  attackRadius: 3.79
+  checkDistance: 1.5
+  gridSettings: {fileID: 0}
+  enemyList: []
+  allyList: []
+  isSelected: 0
+  OnSelected:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeselected:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!136 &6631311647495927192
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,33 +136,3 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8662255331302046464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7112353593753327210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f90e97ade62bf14cb4556ce29aa1e5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hasMoved: 0
-  hasActed: 0
-  gridPosition: {x: 0, y: 0}
-  movePoint: 3
-  moveRange: 5
-  attackRange: 2
-  checkDistance: 1.5
-  gridSettings: {fileID: 0}
-  enemyList: []
-  allyList: []
-  attackRadius: 0
-  isSelected: 0
-  OnSelected:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeselected:
-    m_PersistentCalls:
-      m_Calls: []

@@ -15,7 +15,7 @@ public class GridAchieve : MonoBehaviour
     [SerializeField] private Transform parentObj;
     [SerializeField] private GameObject gridSample;
     [SerializeField] private bool placenmentMode = false;
-    Dictionary<Vector3Int, GridSettings> allGridPos = new Dictionary<Vector3Int, GridSettings>();
+    public Dictionary<Vector3Int, GridSettings> allGridPos = new Dictionary<Vector3Int, GridSettings>();
     public Grid grid;
     private void Start()
     {
@@ -181,7 +181,7 @@ public class GridAchieve : MonoBehaviour
                 //把阻挡的地块排除
                 if (isPassable)
                 {
-                    Debug.Log($"有效邻居：{neighborPos}");
+                    //Debug.Log($"有效邻居：{neighborPos}");
                     neighbors.Add(new Node(neighborPos, null, 0, 0));
                 }
             }

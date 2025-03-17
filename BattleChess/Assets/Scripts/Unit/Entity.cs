@@ -5,14 +5,14 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     [Header("状态")]
-    public bool hasMoved;       // 是否已移动
     public bool hasActed;       // 是否已行动
     public Vector2Int gridPosition;
+    public int MaxMovepoint;
+    //回合制管理器里需要刷新角色移动状态和移动点，所以要一个最大值存储，但是MaxMovepoint和movePoint都public总觉得不太好
     public int movePoint;
 
     [Header("属性")]
-    public int moveRange = 5;   // 移动范围
-    public int attackRange = 2; // 攻击范围
+    [SerializeField] private float attackRadius;
 
     [Header("初始化检测地面")]
     [SerializeField] private float checkDistance;
@@ -21,10 +21,13 @@ public class Entity : MonoBehaviour
 
     public List<GameObject> enemyList = new List<GameObject>();//两个list分别存敌人和友军
     public List<GameObject> allyList = new List<GameObject>();
-    [SerializeField] private float attackRadius;
     protected virtual void Start()
     {
         TargetCheck();
+        movePoint = MaxMovepoint;
+    }
+    protected virtual void Update()
+    {
     }
     public void InitializeGroundGrid()//初始化检测一遍地面grid的并给脚本赋值，修复空值问题
                                        //名字有点问题，因为下面的方法也用了一次这个方法
@@ -79,5 +82,13 @@ public class Entity : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - checkDistance, transform.position.z));
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.gray;
+       // Gizmos.DrawSphere(transform.position, attackRadius);
+        //不是，你怎么真画球啊
+        
     }
 }

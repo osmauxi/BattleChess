@@ -95,6 +95,7 @@ public class TurnBasedManager : MonoBehaviour
         foreach (var unit in playerUnits)
         {
             unit.GetComponent<Unit>().hasActed = false;
+            unit.movePoint = unit.MaxMovepoint;
         }
 
         // 切换到单位选择状态
@@ -140,7 +141,20 @@ public class TurnBasedManager : MonoBehaviour
         }
 
         // 结束回合
+        
         currentState = TurnState.TurnEnding;
+    }
+    private IEnumerator HandleTurnEnd()
+    {
+        Debug.Log($"第{currentRound}回合结束");
+        currentRound++;
+        foreach (var enemy in enemyUnits)
+        //回合跳过之前重置行动点，也可以与HandlePlayerTurnStart的刷新放一块，不过先写在这里
+        {
+            enemy.movePoint = enemy.MaxMovepoint;
+        }
+        yield return new WaitForSeconds(1f);
+        currentState = TurnState.PlayerTurnStart; // 开始新回合
     }
 
     // 执行单个敌人AI逻辑
@@ -152,26 +166,15 @@ public class TurnBasedManager : MonoBehaviour
 
         if (nearestPlayer != null)
         {
-            /*
-            // 计算移动路径
-            List<Vector2Int> path = Pathfinding.FindPath(
-                enemy.gridPosition,
-                nearestPlayer.gridPosition,
-                enemy.movementRange
-            );
+          
 
-            // 执行移动
-            if (path != null && path.Count > 0)
-            {
-                yield return StartCoroutine(MoveUnitAlongPath(enemy, path));
-            }
-        */
         }
 
         // 可以在此处添加攻击逻辑
         yield return null;
 
     }
+    // 回合结束处理
     #endregion
 
     #region 通用方法
@@ -212,28 +215,7 @@ public class TurnBasedManager : MonoBehaviour
         }
         return true;
     }
-    /*
-    // 单位沿路径移动协程
-    private IEnumerator MoveUnitAlongPath(Unit unit, List<Vector2Int> path)
-    {
-
-        foreach (var step in path)
-        {
-            Vector3 targetPos = GridSystem.Instance.GridToWorld(step);
-            while (Vector3.Distance(unit.transform.position, targetPos) > 0.1f)
-            {
-                unit.transform.position = Vector3.MoveTowards(
-                    unit.transform.position,
-                    targetPos,
-                    5f * Time.deltaTime
-                );
-
-                yield return null;
-            }
-            unit.gridPosition = step;
-        }
-    }
-    */
+   
     // 查找最近玩家单位
     private Unit FindNearestPlayerUnit(Vector3 enemyPosition)
     {
@@ -252,13 +234,5 @@ public class TurnBasedManager : MonoBehaviour
         return nearest;
     }
 
-    // 回合结束处理
-    private IEnumerator HandleTurnEnd()
-    {
-        Debug.Log($"第{currentRound}回合结束");
-        currentRound++;
-        yield return new WaitForSeconds(1f);
-        currentState = TurnState.PlayerTurnStart; // 开始新回合
-    }
     #endregion
 }

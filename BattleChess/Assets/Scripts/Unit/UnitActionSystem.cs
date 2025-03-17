@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEngine.UI.CanvasScaler;
 
 public class UnitActionSystem : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField]private float correctedDis;//人物卡进地面的距离修正
     [Header("路径列表")]
     public List<Vector3Int> pathList = new List<Vector3Int>();
+    [SerializeField] private float moveSpeed;
 
 
     void Awake()
@@ -27,8 +30,9 @@ public class UnitActionSystem : MonoBehaviour
         else
             Destroy(gameObject);
     }
-   
 
+
+    
     // 处理鼠标点击
     public void HandleMouseClick()
         //总觉得怪怪的，有点影响我其它功能实现，之后看有没有机会改了吧
@@ -69,7 +73,7 @@ public class UnitActionSystem : MonoBehaviour
                         Vector3 movePos = new Vector3(hit.transform.position.x, hit.transform.position.y + correctedDis, hit.transform.position.z);//最终移动到的位置
 
                         selectedUnit.GridOccupiedChange();//将移动前位置的单元格设为未占据
-                        UnitMove(movePos, selectedUnit, targetGrid.GridMoveInformation());//移动实现
+                        UnitMove(movePos, selectedUnit, selectedUnit.GetGroundGrid());//移动实现
                     }
                     else
                     {
@@ -91,15 +95,37 @@ public class UnitActionSystem : MonoBehaviour
         }
     }
 
-    private void UnitMove(Vector3 Mospos,Unit controlledUnit,int moveCost)
+    private void UnitMove(Vector3 Mospos,Unit controlledUnit,GridSettings pathStart)
     {
         selectedUnit.GetGroundGrid().MovedColorRestore(selectedUnit.GetGroundGrid());//这个是移动时稳定在移动前进行颜色还原
         pathList=GridAchieve.instance.PathFind(Mospos);
-        //这个后续换成更具体的移动
-        //controlledUnit.transform.position = Mospos;
-        //！！！！！！！！！！！！！！！！！！！！！
-        selectedUnit.movePoint -= moveCost;
+        StartCoroutine(MoveAlongPath(selectedUnit));
+        //不能直接调用MoveAlongPath方法而是用StartCoroutine来引用，不然出现不调用没反应的问题，携程不是很懂
     }
+    private IEnumerator MoveAlongPath(Unit unit)
+    {
+    // 普通方法而非协程。在 while 循环中直接连续执行移动逻辑时，Unity 的主线程会被完全阻塞,导致没画面卡死
+        foreach (Vector3Int path in pathList)
+        {
+            Vector3 targetPos = GridAchieve.instance.allGridPos[path].transform.position;
+            targetPos.y = unit.transform.position.y; // 保持Y轴一致
+
+            // 逐步移动到当前路径点
+            while(Vector3.Distance(unit.transform.position, targetPos) > 0.1f)
+            {
+                unit.transform.position = Vector3.MoveTowards(unit.transform.position,targetPos,moveSpeed * Time.deltaTime);
+                yield return null;
+            }
+            int moveCost = GridAchieve.instance.allGridPos[path].GridMoveInformation();
+             // 移动完成后扣除移动点数
+            unit.movePoint -= moveCost;
+            if (selectedUnit.movePoint == 0) 
+            {
+                selectedUnit.hasActed = true;
+                DeselectUnit();
+            }
+        }
+    }   
 
     // 选中单位
     private void SelectUnit(Unit unit)
