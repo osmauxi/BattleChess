@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class GridSettings : MonoBehaviour
 { 
@@ -10,8 +13,7 @@ public class GridSettings : MonoBehaviour
     {
         plainGrid,//可移动格子，消耗一个移动点
         ruggedGrid,//可移动丘陵，消耗两个移动点
-        hinderGrid,//不可移动阻碍格，无法通过,我想阻碍格直接不做就行了，没必要在这里弄 //现在想到寻路算法可能要用到，所以还是启用吧
-        trapGrid,//可移动陷阱格，可通过
+        controlledGrid,//可移动陷阱格，可通过
         interactGrid//可移动(?)交互格
     }
     [Header("占据检测")]
@@ -22,6 +24,8 @@ public class GridSettings : MonoBehaviour
     [SerializeField] private int finalMovingCosts;
     public Vector3Int gridCellPosition;
     public bool isInMovementRange = false;
+    //因为自动显示移动路径毕竟要放到update里，不用bool约束的话一直尝试变颜色感觉不太好
+    public bool pathColorChanged = false;
     [Header("移动约束")]
     public List<GridSettings> gridList = new List<GridSettings>();
     [SerializeField] private float gridCheckDistance;
@@ -60,12 +64,13 @@ public class GridSettings : MonoBehaviour
             case GridType.ruggedGrid:
                 SetUpGridInformation(GridMoveCostSet.ruggedGridMoveCosts);
                 break;
-            case GridType.trapGrid:
+            case GridType.controlledGrid:
                 SetUpGridInformation(GridMoveCostSet.controlledGridMoveCosts);
                 break;
             case GridType.interactGrid:
                 SetUpGridInformation(GridMoveCostSet.hinderedGridMoveCosts);
                 break;
+
         }
     }
 
@@ -84,7 +89,7 @@ public class GridSettings : MonoBehaviour
         occupied = Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
         if (occupied)
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
+            if (hit.collider.gameObject.CompareTag("Player")|| hit.collider.gameObject.CompareTag("Enemy"))
             {
                 occupied = true;
             }
@@ -95,7 +100,42 @@ public class GridSettings : MonoBehaviour
         }
     }
 
-    
+    public void PathColorChange(List<Vector3Int> pathList) 
+    {
+        foreach (var path in pathList) 
+        {
+            GridSettings grid = GridAchieve.instance.allGridPos[path];
+            if (!grid.pathColorChanged)
+            {
+                GridSettings currentGrid = grid;
+                currentGrid.rend.material.color = Color.blue;
+                grid.pathColorChanged = true;
+            }
+        }
+    }
+    public void PathColorRestore(List<Vector3Int> pathList)
+    {
+        foreach (var path in pathList)
+        {
+            GridSettings grid = GridAchieve.instance.allGridPos[path];
+            if (grid.pathColorChanged)
+            {
+                GridSettings currentGrid = grid;
+                if(grid.isInMovementRange)
+                    currentGrid.rend.material.color = Color.red;
+                else
+                    currentGrid.rend.material.color = originalColor;
+                //这个方法是在角色选中状态下进行，所以默认颜色是红色
+                grid.GridPathStateChange();
+            }
+        }
+    }
+
+    public void GridPathStateChange()
+    {
+        pathColorChanged = false;
+        //移动那下不能改颜色，只改状态，所以拆出来
+    }
 
     public void CanMoveColorChange(GridSettings gridSettings,int movePoint) 
     {
@@ -115,7 +155,7 @@ public class GridSettings : MonoBehaviour
             foreach (GridSettings neighbor in current.gridList)
             {
                 // 检查邻居是否未被访问过，并且剩余行动点足够移动到该邻居
-                if (!visited.Contains(neighbor) && remaining >= neighbor.finalMovingCosts)
+                if (!visited.Contains(neighbor) && remaining >= neighbor.finalMovingCosts && !neighbor.occupied)
                 {
                     // 标记该邻居在移动范围内
                     neighbor.isInMovementRange = true;
@@ -135,28 +175,87 @@ public class GridSettings : MonoBehaviour
         }
     }
 
+    private T GetOccupied<T>(GridSettings grid) where T : Entity
+        // where T : Entity约束了泛型T的类型必须继承自Entity，保证了T可以变成Unit或Enemy类型，防止报错
+        //用于获取上方占据的类型和脚本
+    {
+        RaycastHit hit;//存储碰撞体信息
+        if (grid.occupied)
+        {
+            Type type = typeof(T);
+            if (type == typeof(Enemy))
+            {
+                foreach (var a in TurnBasedManager.Instance.enemyUnits)
+                {
+                    if (a.gridPosition == grid.gridCellPosition && a is Entity)
+                    {
+                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        return a as T;
+                    }
+                }
+            }
+            else if (type == typeof(Unit)) 
+            {
+                foreach (var a in TurnBasedManager.Instance.playerUnits)
+                {
+                    if (a.gridPosition == grid.gridCellPosition && a is Entity)
+                    {
+                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        return a as T;
+                    }
+                }
+            }
+        }
+        return default(T);
+    }
+    public void UnitScene<T>(GridSettings gridSettings, int checkRange,out List<T> list) where T : Entity
+        //敌人侦测范围的脚本,本质上就是移动返回检索少一个变色,想了一下至少要写四个这个函数，索性写成泛型
+    {
+        list = new List<T>();
+        //这里将传入的list洗了，我觉得还不错，不用在最后写东西洗
+        // 将角色当前所在的地图格加入队列，初始剩余行动点为角色的行动点
+        Queue<(GridSettings gridSetting, int scenePoint)> queue = new Queue<(GridSettings gridSettings, int remainingPoints)>();
+        HashSet<GridSettings> visited = new HashSet<GridSettings>();
+        queue.Enqueue((gridSettings, checkRange));
+        visited.Add(gridSettings);
+
+        // 开始BFS广度优先搜索
+        while (queue.Count > 0)
+        {
+            var (current, remaining) = queue.Dequeue();
+
+            // 检查当前地块是否包含目标实体
+            if (current.occupied&&current != gridSettings)
+            {
+                T entity = current.GetOccupied<T>(current);
+                if (entity != null && !list.Contains(entity))
+                {
+                    list.Add(entity);
+                }
+            }
+            if (remaining <= 0) 
+                continue;
+            // 遍历当前地图格的周围的四个地块，进行依次访问
+            foreach (GridSettings neighbor in current.gridList)
+            {
+                if (!visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    queue.Enqueue((neighbor, remaining - 1));
+                }
+            }
+        }
+    }
     public void MovedColorRestore(GridSettings gridSettings) //移动后恢复颜色
     {
         foreach (var a in visited)
         //用foreach就不让我在循环中清除值(不能访问一个删除一个)，用for的话visited作为HashSet集合是无序的没有索引，好在HashSet有个删除全部的方法
         {
             a.rend.material.color = originalColor;
+            a.isInMovementRange = false;
         }
             visited.Clear();
             //将颜色还原的同时清空列表
-    }
-
-    public bool CanMoveCheck(GridSettings targetGrid) //约束单位只能进行一格范围内的移动
-    {
-        FourWayGridDetection();
-        if (gridList.Contains(targetGrid))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     private void FourWayGridDetection()
@@ -182,12 +281,6 @@ public class GridSettings : MonoBehaviour
             }
         }
     }
-
-    private void Update()
-    {
-        
-    }
-
     private void OnDrawGizmos()//Physics.Raycast射线检测的可视化
     {
         Gizmos.color = Color.red;

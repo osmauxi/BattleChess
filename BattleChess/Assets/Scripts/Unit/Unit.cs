@@ -17,8 +17,6 @@ public class Unit : Entity
     {
         base.Start();
         GetColorInf();
-        InitializeGroundGrid();
-        GetGroundGrid();
         //将地面格方法加入选中事件中
         OnSelected.AddListener(TileMap.Instance.GridUpEvent);
         OnDeselected.AddListener(TileMap.Instance.GridDownEvent);
@@ -29,18 +27,6 @@ public class Unit : Entity
         rend = GetComponent<Renderer>();
         originalMaterial = rend.material;
         originalColor = rend.material.color;
-    }
-
-    
-    public GridSettings GetGroundGrid() // 给其他脚本获取当前角色脚底的Grid
-    {
-        InitializeGroundGrid();//传值之前再检测一次对应的grid，防止检测地面格和实际位置不一致
-        return gridSettings;
-    }
-    public void GridOccupiedChange() //修改当前脚下的gird的occupied值
-    {
-            MovedGroundCheck();
-            gridSettings.occupied = false;
     }
 
     // 设置选中状态

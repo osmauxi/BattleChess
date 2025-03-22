@@ -17,6 +17,7 @@ public class GridAchieve : MonoBehaviour
     [SerializeField] private bool placenmentMode = false;
     public Dictionary<Vector3Int, GridSettings> allGridPos = new Dictionary<Vector3Int, GridSettings>();
     public Grid grid;
+    private bool offSetFix = false;
     private void Start()
     {
         grid = GetComponent<Grid>();
@@ -66,11 +67,20 @@ public class GridAchieve : MonoBehaviour
 
     public List<Vector3Int> PathFind(UnityEngine.Vector3 finalPos)
     {
-        Vector3Int startPos = UnitActionSystem.Instance.selectedUnit.GetGroundGrid().gridCellPosition;
+        Vector3Int startPos = new Vector3Int();
+        //在角色控制阶段就找选择的单位，在敌人移动阶段就找回合制管理器里面敌人转到谁了
+        if (TurnBasedManager.Instance.currentState == TurnState.PlayerControlled)
+        {
+            startPos = UnitActionSystem.Instance.selectedUnit.GetGroundGrid().gridCellPosition;
+        }
+        else if (TurnBasedManager.Instance.currentState == TurnState.EnemyUnitActing) 
+        {
+            startPos = TurnBasedManager.Instance.currentControlledEnemy.GetGroundGrid().gridCellPosition;
+        }
         Vector3Int endPos = Vector3Int.FloorToInt(TranslatePosIntoGridPos(finalPos));
         //Debug.Log($"终点坐标转换结果：{endPos}" + endPos.GetType());
         // 检查目标位置是否存在网格
-        if (allGridPos.ContainsKey(endPos))
+        if (allGridPos.ContainsKey(endPos)&&startPos != null)
         {
             // A*寻路
             List<Vector3Int> path = FindPath(startPos, endPos);
@@ -79,7 +89,7 @@ public class GridAchieve : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Target grid does not exist!");
+            Debug.LogError("Target grid does not exist Or does not find start position");
             return null;
         }
     }
@@ -107,14 +117,13 @@ public class GridAchieve : MonoBehaviour
             //依次循环访问当前地块周围的4格地块，将openList清空以便下一个节点使用，并加入closedList来表示已被探索
 
             // 如果当前节点是目标节点，回溯路径
-            if (currentNode.position == endPos)
+            if (currentNode.position == endPos || offSetFix)
             {
-                Debug.Log("找到路径！");
                 return RetracePath(startNode, currentNode);
             }
 
             // 获取当前节点的相邻节点
-            List<Node> neighbors = GetNeighbors(currentNode);
+            List<Node> neighbors = GetNeighbors(currentNode,endPos);
             //在访问起点地块后，上方openList已经空了(最开始只有一个地块在List<Node> openList中)，所以马上获取周围地块
             foreach (Node neighbor in neighbors)
             {
@@ -159,7 +168,7 @@ public class GridAchieve : MonoBehaviour
         return lowestFCostNode;
     }
 
-    private List<Node> GetNeighbors(Node node)
+    private List<Node> GetNeighbors(Node node,Vector3Int endPos)
         //游戏卡死的原因在于在本方法中获取到的四个相邻地块算是新的实例，即使值相同，没有重写Equals方法之前也算做不同的实例
         //导致的问题是已经走过的路因为新实例的生成而被重新走，走过之后又生成相同的实例走回去，无限循环导致了卡死
     {
@@ -171,19 +180,25 @@ public class GridAchieve : MonoBehaviour
             Vector3Int neighborPos = node.position + direction;
             //Vector3Int[]里全是单位向量，在本地块的坐标上+1就是相邻地块的坐标了，allGridPos有所有地块的坐标集，找得到就在通过值和键的对应找到对应的GridSettings实例
             if (allGridPos.TryGetValue(neighborPos, out GridSettings neighborGrid) && !neighborGrid.occupied)
-                //TryGetValue尝试获取与指定键关联的值，而不会像直接通过索引访问那样在键不存在时抛出异常
-                //这里一个方法将下面两个语句合在一起了                
-                //allGridPos.ContainsKey(neighborPos)
-                //GridSettings neighborGrid = allGridPos[neighborPos];
+            //TryGetValue尝试获取与指定键关联的值，而不会像直接通过索引访问那样在键不存在时抛出异常
+            //这里一个方法将下面两个语句合在一起了                
+            //allGridPos.ContainsKey(neighborPos)
+            //GridSettings neighborGrid = allGridPos[neighborPos];
             {
                 //访问周围四个地块，将没有被占据(能移动的)地块加入list，当前为中心的最佳地块就成了父物体，周围四个中的最佳地块会成为中心地块的子物体
-                bool isPassable = neighborGrid.gridType != GridType.hinderGrid && !neighborGrid.occupied;
+                bool isPassable = !neighborGrid.occupied;
                 //把阻挡的地块排除
                 if (isPassable)
                 {
                     //Debug.Log($"有效邻居：{neighborPos}");
                     neighbors.Add(new Node(neighborPos, null, 0, 0));
                 }
+            }
+            else if (neighborPos == endPos) 
+//我不喜欢一遇到目的地受阻挡就找不到路径空值报错的移动算法，所以加一个偏差补足机制，目的地受阻但是周围四格能走的话就将寻路的上一个格直接当终点走了
+            {
+                offSetFix = true;
+                break;
             }
         }
 

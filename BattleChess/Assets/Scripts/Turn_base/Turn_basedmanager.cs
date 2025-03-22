@@ -27,11 +27,12 @@ public class TurnBasedManager : MonoBehaviour
     public int currentRound = 1;        // 当前回合数
 
     // 单位列表存储需要进行移动的所有单位
-    [SerializeField] private List<Unit> playerUnits = new List<Unit>();
-    [SerializeField] private List<Enemy> enemyUnits = new List<Enemy>();
+    public List<Unit> playerUnits = new List<Unit>();
+    public List<Enemy> enemyUnits = new List<Enemy>();
 
     // 当前状态
-    [SerializeField] private TurnState currentState = TurnState.PlayerTurnStart;
+    public TurnState currentState = TurnState.PlayerTurnStart;
+    public Enemy currentControlledEnemy = new Enemy();
 
     void Awake()
     {
@@ -132,12 +133,17 @@ public class TurnBasedManager : MonoBehaviour
         {
             // 跳过被消灭的单位
             if (enemy == null) continue;
-
+            currentControlledEnemy = enemy;
+            enemy.isMoving = true;
+            //!!!!!!!!!!!!!!!!!!!!
+            enemy.Move = true;
+            //!!!!!!!!!!!!!!!!!!!!
+            while (enemy.isMoving != false) 
+            {
+                yield return null;
+            }
             // 执行AI决策
             yield return StartCoroutine(ExecuteEnemyAI(enemy));
-
-            // 行动间隔
-            yield return new WaitForSeconds(aiActionDelay);
         }
 
         // 结束回合
@@ -215,7 +221,16 @@ public class TurnBasedManager : MonoBehaviour
         }
         return true;
     }
-   
+
+    private bool CheckAllEnemyUnitsActed()
+    {
+        foreach (var enemy in enemyUnits)
+        {
+            if (!enemy.hasActed) return false;
+        }
+        return true;
+    }
+
     // 查找最近玩家单位
     private Unit FindNearestPlayerUnit(Vector3 enemyPosition)
     {

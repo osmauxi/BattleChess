@@ -6,24 +6,26 @@ public class Entity : MonoBehaviour
 {
     [Header("状态")]
     public bool hasActed;       // 是否已行动
-    public Vector2Int gridPosition;
+    public Vector3Int gridPosition;
     public int MaxMovepoint;
     //回合制管理器里需要刷新角色移动状态和移动点，所以要一个最大值存储，但是MaxMovepoint和movePoint都public总觉得不太好
     public int movePoint;
 
     [Header("属性")]
-    [SerializeField] private float attackRadius;
+    public bool isMoving = false;
+    public int sceneRange;
 
     [Header("初始化检测地面")]
     [SerializeField] private float checkDistance;
     public GridSettings gridSettings;//获取脚下的那块地的occupied，来实时更新，单纯觉得让格子每帧进行碰撞检测有点费电脑^W^
     private RaycastHit hit;
 
-    public List<GameObject> enemyList = new List<GameObject>();//两个list分别存敌人和友军
-    public List<GameObject> allyList = new List<GameObject>();
+    public List<Enemy> enemyList = new List<Enemy>();//两个list分别存敌人和友军
+    public List<Unit> unitList = new List<Unit>();
     protected virtual void Start()
     {
-        TargetCheck();
+        InitializeGroundGrid();
+        GetGroundGrid();
         movePoint = MaxMovepoint;
     }
     protected virtual void Update()
@@ -37,6 +39,7 @@ public class Entity : MonoBehaviour
             if (hit.collider.gameObject.CompareTag("ground"))
             {
                 gridSettings = hit.collider.GetComponent<GridSettings>();
+                gridPosition = gridSettings.gridCellPosition;
             }
         }
     }
@@ -57,27 +60,6 @@ public class Entity : MonoBehaviour
             gridSettings = null;
         }
     }
-
-    //移动过程中进行敌人与友军检测并组成列表
-    public void TargetCheck() 
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, attackRadius);
-        foreach (var units in colliders) 
-        {
-            //因为敌人也要分友军和敌人（考虑敌人会有支援技能？）所以两个列表给敌人和友军单位公用，Player单纯是tag自带我没改，直接当友军单位的tag了
-            if (units.CompareTag("Player") && gameObject.tag == "Player" || units.CompareTag("Enemy") && gameObject.tag == "Enemy")
-            {
-                allyList.Add(units.gameObject);
-            }
-            else if (units.CompareTag("Enemy") && gameObject.tag == "Player" || units.CompareTag("Player") && gameObject.tag == "Enemy") 
-            {
-                enemyList.Add(units.gameObject);
-            }
-        }
-    }
-    //！！！！！！！！！！！！！！！！！
-    //A*寻路写好之后把unit的移动逻辑重写
-    //！！！！！！！！！！！！！！！！！
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
@@ -90,5 +72,35 @@ public class Entity : MonoBehaviour
        // Gizmos.DrawSphere(transform.position, attackRadius);
         //不是，你怎么真画球啊
         
+    }
+
+    public GridSettings GetGroundGrid() // 给其他脚本获取当前角色脚底的Grid
+    {
+        InitializeGroundGrid();//传值之前再检测一次对应的grid，防止检测地面格和实际位置不一致
+        return gridSettings;
+    }
+
+    public void GridOccupiedChange() //修改当前脚下的gird的occupied值
+    {
+        MovedGroundCheck();
+        gridSettings.occupied = false;
+    }
+}
+
+public class Skill
+//设计为一个角色固定几个技能，每个技能一个实例
+//专门的技能类，这样实现技能功能时便可以直接配置好
+{
+    public int skillNum;//技能编号
+    public int damage;
+    public int manaCost;//耗蓝
+    public int attackRange;   
+     
+    public Skill(int _skillNum,int _damage,int _manaCost,int _attackRange)
+    {
+        skillNum = _skillNum;
+        damage = _damage;
+        manaCost = _manaCost;
+        attackRange = _attackRange;
     }
 }

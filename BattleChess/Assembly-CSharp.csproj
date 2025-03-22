@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
     <Compile Include="Assets\Scripts\Unit\Entity.cs" />
     <Compile Include="Assets\Scripts\Grid\TileMapController.cs" />
+    <Compile Include="Assets\Scripts\Characters\Warrior.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
