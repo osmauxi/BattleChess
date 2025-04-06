@@ -1,5 +1,6 @@
 using UnityEngine.Events;
 using UnityEngine;
+using System.Collections.Generic;
 public class Unit : Entity
 {
     [Header("◊¥Ã¨")]
@@ -35,6 +36,7 @@ public class Unit : Entity
         isSelected = selected;
         if (selected)
         {
+            BattleInfUISet.Instance.SetAllayUIVisible(true);
             rend.material.color = Color.yellow; // ∏ﬂ¡¡œ‘ æ
             GetGroundGrid().CanMoveColorChange(GetGroundGrid(),movePoint);
             OnSelected?.Invoke();

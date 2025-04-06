@@ -26,9 +26,12 @@ public class GridSettings : MonoBehaviour
     public bool isInMovementRange = false;
     //因为自动显示移动路径毕竟要放到update里，不用bool约束的话一直尝试变颜色感觉不太好
     public bool pathColorChanged = false;
+    public bool isInAttackRange = false;
+    public RaycastHit hit;//存储碰撞体信息
     [Header("移动约束")]
     public List<GridSettings> gridList = new List<GridSettings>();
     [SerializeField] private float gridCheckDistance;
+
     private Material originalMaterial;
     private Renderer rend;
     private Color originalColor;
@@ -85,7 +88,6 @@ public class GridSettings : MonoBehaviour
     }
     public void OccupiedCheck()
     {
-        RaycastHit hit;//存储碰撞体信息
         occupied = Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
         if (occupied)
         {
@@ -99,7 +101,14 @@ public class GridSettings : MonoBehaviour
             }
         }
     }
-
+    public void CanAttackColorChange()
+    {
+        rend.material.color = Color.cyan;
+    }
+    public void CanAttackColorRestore()
+    {
+        rend.material.color = originalColor;
+    }
     public void PathColorChange(List<Vector3Int> pathList) 
     {
         foreach (var path in pathList) 
@@ -112,6 +121,22 @@ public class GridSettings : MonoBehaviour
                 grid.pathColorChanged = true;
             }
         }
+    }
+
+    public T GetTargetAbove<T>() where T : Entity
+    {
+        //Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
+        Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, UnitActionSystem.Instance.unitLayer);
+        // 尝试获取目标对象的泛型组件
+        T entityComponent = hit.collider.GetComponent<T>();
+        // 验证组件是否存在且有效
+        if (entityComponent != null)
+        {
+            return entityComponent;
+        }
+       
+        return default(T);
+
     }
     public void PathColorRestore(List<Vector3Int> pathList)
     {
@@ -179,7 +204,6 @@ public class GridSettings : MonoBehaviour
         // where T : Entity约束了泛型T的类型必须继承自Entity，保证了T可以变成Unit或Enemy类型，防止报错
         //用于获取上方占据的类型和脚本
     {
-        RaycastHit hit;//存储碰撞体信息
         if (grid.occupied)
         {
             Type type = typeof(T);
@@ -189,7 +213,7 @@ public class GridSettings : MonoBehaviour
                 {
                     if (a.gridPosition == grid.gridCellPosition && a is Entity)
                     {
-                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        //Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
                         return a as T;
                     }
                 }
@@ -200,7 +224,7 @@ public class GridSettings : MonoBehaviour
                 {
                     if (a.gridPosition == grid.gridCellPosition && a is Entity)
                     {
-                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        //Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
                         return a as T;
                     }
                 }
@@ -223,7 +247,6 @@ public class GridSettings : MonoBehaviour
         while (queue.Count > 0)
         {
             var (current, remaining) = queue.Dequeue();
-
             // 检查当前地块是否包含目标实体
             if (current.occupied&&current != gridSettings)
             {

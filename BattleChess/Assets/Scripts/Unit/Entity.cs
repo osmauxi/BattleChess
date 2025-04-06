@@ -19,6 +19,11 @@ public class Entity : MonoBehaviour
     [SerializeField] private float checkDistance;
     public GridSettings gridSettings;//获取脚下的那块地的occupied，来实时更新，单纯觉得让格子每帧进行碰撞检测有点费电脑^W^
     private RaycastHit hit;
+    [Header("攻击")]
+    public bool canBeAttacked = false;
+    public bool isAttacking = false;
+
+    public List<Skill> skills = new List<Skill>();
 
     public List<Enemy> enemyList = new List<Enemy>();//两个list分别存敌人和友军
     public List<Unit> unitList = new List<Unit>();
@@ -66,14 +71,6 @@ public class Entity : MonoBehaviour
         Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - checkDistance, transform.position.z));
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.gray;
-       // Gizmos.DrawSphere(transform.position, attackRadius);
-        //不是，你怎么真画球啊
-        
-    }
-
     public GridSettings GetGroundGrid() // 给其他脚本获取当前角色脚底的Grid
     {
         InitializeGroundGrid();//传值之前再检测一次对应的grid，防止检测地面格和实际位置不一致
@@ -84,23 +81,5 @@ public class Entity : MonoBehaviour
     {
         MovedGroundCheck();
         gridSettings.occupied = false;
-    }
-}
-
-public class Skill
-//设计为一个角色固定几个技能，每个技能一个实例
-//专门的技能类，这样实现技能功能时便可以直接配置好
-{
-    public int skillNum;//技能编号
-    public int damage;
-    public int manaCost;//耗蓝
-    public int attackRange;   
-     
-    public Skill(int _skillNum,int _damage,int _manaCost,int _attackRange)
-    {
-        skillNum = _skillNum;
-        damage = _damage;
-        manaCost = _manaCost;
-        attackRange = _attackRange;
     }
 }

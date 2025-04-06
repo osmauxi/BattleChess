@@ -12,7 +12,6 @@ public class Enemy : Entity
     //列表是引用变量，复制是引用赋值，不是值赋值，我说我删Points的值为什么tourPoints的值在少，赛博鬼打墙了
     public bool Move = false;
     public bool isRunning = false;
-    public float speedOffset;
     [SerializeField]private List<GridSettings> Points = new List<GridSettings>();
     protected override void Start()
     {
@@ -88,7 +87,7 @@ public class Enemy : Entity
             // 逐步移动到当前路径点
             while (Vector3.Distance(transform.position, targetPosBetweenTwoPoints) > .1f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosBetweenTwoPoints, (UnitActionSystem.Instance.moveSpeed - speedOffset) * Time.deltaTime);                 
+                transform.position = Vector3.MoveTowards(transform.position, targetPosBetweenTwoPoints, (UnitActionSystem.Instance.moveSpeed) * Time.deltaTime);                 
                 yield return null;
             }
             GetGroundGrid().UnitScene<Unit>(GetGroundGrid(), sceneRange, out unitList);

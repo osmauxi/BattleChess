@@ -97,6 +97,7 @@ public class TurnBasedManager : MonoBehaviour
         {
             unit.GetComponent<Unit>().hasActed = false;
             unit.movePoint = unit.MaxMovepoint;
+            unit.GetComponent<CharacterStat>().SkillNegativeEffectsUse();
         }
 
         // 切换到单位选择状态
@@ -109,7 +110,7 @@ public class TurnBasedManager : MonoBehaviour
     {
         while (!CheckAllPlayerUnitsActed())
         {
-            UnitActionSystem.Instance.HandleMouseClick();
+            UnitActionSystem.Instance.HandleSelectClick();
             yield return null;
             //yield return null;让脚本停顿一帧，这里就是所有单位没有移动完就一直等
         }
@@ -157,7 +158,11 @@ public class TurnBasedManager : MonoBehaviour
         foreach (var enemy in enemyUnits)
         //回合跳过之前重置行动点，也可以与HandlePlayerTurnStart的刷新放一块，不过先写在这里
         {
-            enemy.movePoint = enemy.MaxMovepoint;
+            if (enemy != null) 
+            {
+                enemy.movePoint = enemy.MaxMovepoint;
+                enemy.GetComponent<CharacterStat>().SkillNegativeEffectsUse();
+            }
         }
         yield return new WaitForSeconds(1f);
         currentState = TurnState.PlayerTurnStart; // 开始新回合

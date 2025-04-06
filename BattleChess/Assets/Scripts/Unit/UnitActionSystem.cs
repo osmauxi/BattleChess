@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using static UnityEngine.UI.CanvasScaler;
 
 public class UnitActionSystem : MonoBehaviour
@@ -17,6 +18,8 @@ public class UnitActionSystem : MonoBehaviour
     public GameObject actionMenuUI;     // 行动菜单UI
 
     public Unit selectedUnit;          // 当前选中单位
+    public Enemy choosedEne; // 当前技能选中敌人
+    public Unit choosedUnit; // 当前技能选中友军
     [SerializeField]private float correctedDis;//人物卡进地面的距离修正
     [Header("路径列表")]
     public List<Vector3Int> pathList = new List<Vector3Int>();
@@ -26,6 +29,8 @@ public class UnitActionSystem : MonoBehaviour
     private Ray ray;
     private RaycastHit hit;
     private GridSettings currentGrid;
+
+    private AttackManager attackManager => AttackManager.instance;//动态获取单例内存
     void Awake()
     {//单例模式
         if (Instance == null)
@@ -33,72 +38,17 @@ public class UnitActionSystem : MonoBehaviour
         else
             Destroy(gameObject);
     }
-
-    private void Update()
+    public void HandleSelectClick()
     {
-        ShowPath();
-        //考虑过放到FixedUpdate里面来降低函数的调用次数，但是这样的话放开右键能不能检测到就看运气了
-    }
-
-    private void ShowPath()
-    {
-        GridSettings pastGrid;
-        if (Input.GetMouseButton(1))
-        {
-            //有一些赋值上的问题，所以这东西很多不能写成局部变量，很多要提出函数体
-            ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            bool isOnGround = Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer);
-            pastGrid = currentGrid;
-            if (isOnGround)
-            {
-                currentGrid = hit.collider.GetComponent<GridSettings>();
-                if (currentGrid.isInMovementRange)
-                {
-                    GridSettings grid;
-                    if (pastGrid != currentGrid)
-                    {
-                        grid = selectedUnit.GetGroundGrid();
-                        grid.PathColorRestore(pathList);
-                    }
-                    GetPathAndChangeColor();
-                }
-                else
-                {
-                    //后面可以写个改变鼠标的函数表示位置不对
-                }
-
-            }
-        }
-        else if (Input.GetMouseButtonUp(1))
-        {
-            GridSettings grid = selectedUnit.GetGroundGrid();
-            //实在不想把一个语句写两遍啊....
-            GroundMoveCheck(ray, unitCatched);
-            grid.GridPathStateChange();
-        }
-    }
-
-    private void GetPathAndChangeColor()
-    {
-        pathList = GridAchieve.instance.PathFind(hit.collider.transform.position);
-        selectedUnit.GetGroundGrid().PathColorChange(pathList);
-    }
-
-    // 处理鼠标点击
-    public void HandleMouseClick()
-        //总觉得怪怪的，有点影响我其它功能实现，之后看有没有机会改了吧
-        //############################################################
-    {
-        /* 忽略UI点击
         if (EventSystem.current.IsPointerOverGameObject())
-        EventSystem.current.IsPointerOverGameObject()判断鼠标是否点击在UI上
+        //判断鼠标是否点击在UI上
         {
             return;
         }
-        */
+        ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        
         if (Input.GetMouseButtonDown(0))
         {
-            ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             // 检测是否点击单位
             unitCatched = Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer);
             if (unitCatched)
@@ -111,8 +61,71 @@ public class UnitActionSystem : MonoBehaviour
                 }
             }
         }
-        
     }
+
+    private void Update()
+    {
+        ShowPath();
+        //考虑过放到FixedUpdate里面来降低函数的调用次数，但是这样的话放开右键能不能检测到就看运气了
+    }
+
+    private void ShowPath()//单位选中后，显示移动范围，每帧获取选中地块的位置，然后结合寻路显示路径
+    {
+        GridSettings pastGrid;
+        if(selectedUnit != null)
+        {
+            if (Input.GetMouseButton(1))
+            {
+                //有一些赋值上的问题，所以这东西很多不能写成局部变量，很多要提出函数体
+                ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                bool isOnGround = Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer);
+                pastGrid = currentGrid;
+                if (isOnGround)
+                {
+                    currentGrid = hit.collider.GetComponent<GridSettings>();
+                    if (currentGrid.isInMovementRange)
+                    {
+                        if (BattleInfUISet.Instance.EnemyUIVisible) 
+                        {
+                            BattleInfUISet.Instance.SetEnemyUIVisible(false,choosedEne);
+                        }
+                        GridSettings grid;
+                        if (pastGrid != currentGrid)
+                        {
+                            grid = selectedUnit.GetGroundGrid();
+                            grid.PathColorRestore(pathList);
+                        }
+                        GetPathAndChangeColor();
+                    }
+                    else if (currentGrid.occupied && currentGrid.isInAttackRange) 
+                    {
+                        choosedEne = currentGrid.GetTargetAbove<Enemy>();
+                        BattleInfUISet.Instance.SetEnemyUIVisible(true,choosedEne);
+                    }
+                    else
+                    {
+                        //后面可以写个改变鼠标的函数表示位置不对
+                    }
+
+                }
+            }
+            else if (Input.GetMouseButtonUp(1))
+            {
+                GridSettings grid = selectedUnit.GetGroundGrid();
+                //实在不想把一个语句写两遍啊....
+                grid.PathColorRestore(pathList);
+                GroundMoveCheck(ray, unitCatched);
+                grid.GridPathStateChange();
+            }
+        }
+    }
+
+    private void GetPathAndChangeColor()
+    {
+        pathList = GridAchieve.instance.PathFind(hit.collider.transform.position);
+        selectedUnit.GetGroundGrid().PathColorChange(pathList);
+    }
+
 
     private void GroundMoveCheck(Ray ray, bool unitCatched)
     {
@@ -122,18 +135,23 @@ public class UnitActionSystem : MonoBehaviour
         if (selectedUnit != null && groundCatched && !selectedUnit.isMoving)
         {
             GridSettings targetGrid = hit.collider.GetComponent<GridSettings>();
-            if (targetGrid.isInMovementRange & !targetGrid.occupied && selectedUnit.movePoint != 0)
-            //调用脚底下单元格的CanMoveCheck方法传入鼠标选中的方格的脚本信息，限制移动距离
+            if (selectedUnit.movePoint != 0) 
             {
-                Vector3 movePos = new Vector3(hit.transform.position.x, hit.transform.position.y + correctedDis, hit.transform.position.z);//最终移动到的位置
-                selectedUnit.isMoving = true;
-                selectedUnit.GridOccupiedChange();//将移动前位置的单元格设为未占据
-                UnitMove(movePos, selectedUnit, selectedUnit.GetGroundGrid(), targetGrid);//移动实现
-            }
-            else//写的有点臃肿了，这里复用了懒得改
-            {
-                Debug.Log("Cant Move");
-                DeselectUnit();
+                if (targetGrid.isInMovementRange & !targetGrid.occupied)
+                //调用脚底下单元格的CanMoveCheck方法传入鼠标选中的方格的脚本信息，限制移动距离
+                {
+                    Vector3 movePos = new Vector3(hit.transform.position.x, hit.transform.position.y + correctedDis, hit.transform.position.z);//最终移动到的位置
+                    selectedUnit.isMoving = true;
+                    selectedUnit.GridOccupiedChange();//将移动前位置的单元格设为未占据
+                    UnitMove(movePos, selectedUnit, selectedUnit.GetGroundGrid(), targetGrid);//移动实现
+                }
+                else if(targetGrid.occupied && targetGrid.isInAttackRange)
+                {
+                    SkillUse(attackManager.skill, targetGrid);
+                    selectedUnit.movePoint = 0;//攻击清零移动点
+                    selectedUnit.hasActed = true;
+                    DeselectUnit();
+                }
             }
         }
         if (selectedUnit == true && !groundCatched && !unitCatched)
@@ -141,6 +159,22 @@ public class UnitActionSystem : MonoBehaviour
             DeselectUnit();
         }
 
+    }
+
+    public void SkillUse(Skill skill,GridSettings targetGrid) //给attackmanager传skill到这个方法里进行使用
+    {
+        if (attackManager.WhatSkillType) //对敌
+        {
+            choosedEne.GetComponent<EnemyStat>().DoDamage(skill);
+            choosedEne.GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+            BattleInfUISet.Instance.SetEnemyUIVisible(false, choosedEne);
+        }
+        else if (!attackManager.WhatSkillType) 
+        {
+            choosedUnit = targetGrid.GetTargetAbove<Unit>();
+            //这里还没写回血函数
+        }
+        attackManager.AttackedColorRestore();
     }
 
     private void UnitMove(Vector3 Mospos,Unit controlledUnit,GridSettings pathStart,GridSettings pathend)
@@ -169,12 +203,13 @@ public class UnitActionSystem : MonoBehaviour
             int moveCost = GridAchieve.instance.allGridPos[path].GridMoveInformation();
              // 移动完成后扣除移动点数
             unit.movePoint -= moveCost;
+            if (BattleInfUISet.Instance.AllayUIVisible)
+                BattleInfUISet.Instance.updateAllayText();
         }
         controlledUnit.isMoving = false;
         controlledUnit.GetGroundGrid().occupied = true;
         //到终点之后将脚底物块设为占据
         //selectedUnit.GetGroundGrid().UnitScene<Unit>(selectedUnit.GetGroundGrid(),selectedUnit.sceneRange,out selectedUnit.unitList);
-        //如果写到unitmove里面的话在这个携程没走完之前就会调用，有点问题
         //selectedUnit.GetGroundGrid().UnitScene<Enemy>(selectedUnit.GetGroundGrid(), selectedUnit.sceneRange, out selectedUnit.enemyList);
         if (controlledUnit.movePoint == 0)        
         {
@@ -200,8 +235,11 @@ public class UnitActionSystem : MonoBehaviour
     private void SelectUnit(Unit unit)
     {
         //若当前已有选中单位，先让此单位不被选中
-        if (selectedUnit != null)
+        if (selectedUnit != null) 
+        {
+            BattleInfUISet.Instance.SetAllayUIVisible(true);
             selectedUnit.SetSelected(false);
+        }
         if (unit.isMoving || CheckAnyMoving()) 
         {
             //防止在移动时鼠标连点选中移动的单位
@@ -220,6 +258,9 @@ public class UnitActionSystem : MonoBehaviour
             selectedUnit.SetSelected(false);
             selectedUnit = null;
         }
+        if (AttackManager.instance.colorChangedGrids.Count != 0)
+            AttackManager.instance.AttackedColorRestore();
+        BattleInfUISet.Instance.SetAllayUIVisible(false);
         ShowActionMenu(false);
     }
 
@@ -229,4 +270,6 @@ public class UnitActionSystem : MonoBehaviour
         if (actionMenuUI != null)
             actionMenuUI.SetActive(show);
     }
+
+    //四个技能对应四个按钮，使用的话要加入
 }

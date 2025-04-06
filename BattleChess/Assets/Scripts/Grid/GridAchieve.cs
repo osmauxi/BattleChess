@@ -80,6 +80,8 @@ public class GridAchieve : MonoBehaviour
         Vector3Int endPos = Vector3Int.FloorToInt(TranslatePosIntoGridPos(finalPos));
         //Debug.Log($"终点坐标转换结果：{endPos}" + endPos.GetType());
         // 检查目标位置是否存在网格
+        if (endPos == startPos)
+            return null;
         if (allGridPos.ContainsKey(endPos)&&startPos != null)
         {
             // A*寻路
@@ -119,6 +121,8 @@ public class GridAchieve : MonoBehaviour
             // 如果当前节点是目标节点，回溯路径
             if (currentNode.position == endPos || offSetFix)
             {
+                Debug.Log("FindPath");
+                offSetFix = false;
                 return RetracePath(startNode, currentNode);
             }
 
@@ -151,6 +155,7 @@ public class GridAchieve : MonoBehaviour
             }
         }
         // 没有找到路径
+        Debug.Log("NotFind");
         return null;
     }
 
