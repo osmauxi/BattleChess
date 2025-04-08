@@ -17,11 +17,12 @@ public class GridSettings : MonoBehaviour
         interactGrid//可移动(?)交互格
     }
     [Header("占据检测")]
-    public bool occupied;//是否被占据
+    public bool occupiedbyUnit;//是否被占据
+    public bool occupiedbyEnemy;
     [SerializeField]private float checkDistance;
     [Header("地块信息")]
     public GridType gridType = GridType.plainGrid;
-    [SerializeField] private int finalMovingCosts;
+    public int finalMovingCosts;
     public Vector3Int gridCellPosition;
     public bool isInMovementRange = false;
     //因为自动显示移动路径毕竟要放到update里，不用bool约束的话一直尝试变颜色感觉不太好
@@ -33,7 +34,7 @@ public class GridSettings : MonoBehaviour
     [SerializeField] private float gridCheckDistance;
 
     private Material originalMaterial;
-    private Renderer rend;
+    public Renderer rend;
     private Color originalColor;
     [Header("寻路相关")]
     // 初始化队列用于广度优先搜索,存储要访问的地块和剩余的移动点
@@ -88,16 +89,23 @@ public class GridSettings : MonoBehaviour
     }
     public void OccupiedCheck()
     {
-        occupied = Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
-        if (occupied)
+        occupiedbyUnit = Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
+        if (occupiedbyUnit)
         {
-            if (hit.collider.gameObject.CompareTag("Player")|| hit.collider.gameObject.CompareTag("Enemy"))
+            if (hit.collider.gameObject.CompareTag("Player"))
             {
-                occupied = true;
+                occupiedbyUnit = true;
+                occupiedbyEnemy = false;
             }
-            else
+            else if (hit.collider.gameObject.CompareTag("Enemy"))
             {
-                occupied = false;
+                occupiedbyEnemy = true;
+                occupiedbyUnit = false;
+            }
+            else 
+            {
+                occupiedbyUnit = false;
+                occupiedbyEnemy = false;
             }
         }
     }
@@ -123,18 +131,19 @@ public class GridSettings : MonoBehaviour
         }
     }
 
-    public T GetTargetAbove<T>() where T : Entity
+    public T GetTargetAbove<T>() where T : Entity//获取上方单位
     {
         //Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
-        Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, UnitActionSystem.Instance.unitLayer);
-        // 尝试获取目标对象的泛型组件
-        T entityComponent = hit.collider.GetComponent<T>();
-        // 验证组件是否存在且有效
-        if (entityComponent != null)
+        if (Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, UnitActionSystem.Instance.unitLayer))
         {
-            return entityComponent;
+            // 尝试获取目标对象的泛型组件
+            T entityComponent = hit.collider.GetComponent<T>();
+            // 验证组件是否存在且有效
+            if (entityComponent != null)
+            {
+                return entityComponent;
+            }
         }
-       
         return default(T);
 
     }
@@ -180,7 +189,7 @@ public class GridSettings : MonoBehaviour
             foreach (GridSettings neighbor in current.gridList)
             {
                 // 检查邻居是否未被访问过，并且剩余行动点足够移动到该邻居
-                if (!visited.Contains(neighbor) && remaining >= neighbor.finalMovingCosts && !neighbor.occupied)
+                if (!visited.Contains(neighbor) && remaining >= neighbor.finalMovingCosts && !neighbor.occupiedbyUnit && !neighbor.occupiedbyEnemy)
                 {
                     // 标记该邻居在移动范围内
                     neighbor.isInMovementRange = true;
@@ -199,12 +208,23 @@ public class GridSettings : MonoBehaviour
             }
         }
     }
+    public void MovedColorRestore(GridSettings gridSettings) //移动后恢复颜色
+    {
+        foreach (var a in visited)
+        //用foreach就不让我在循环中清除值(不能访问一个删除一个)，用for的话visited作为HashSet集合是无序的没有索引，好在HashSet有个删除全部的方法
+        {
+            a.rend.material.color = originalColor;
+            a.isInMovementRange = false;
+        }
+            visited.Clear();
+            //将颜色还原的同时清空列表
+    }
 
     private T GetOccupied<T>(GridSettings grid) where T : Entity
         // where T : Entity约束了泛型T的类型必须继承自Entity，保证了T可以变成Unit或Enemy类型，防止报错
         //用于获取上方占据的类型和脚本
     {
-        if (grid.occupied)
+        if (grid.occupiedbyUnit)
         {
             Type type = typeof(T);
             if (type == typeof(Enemy))
@@ -248,7 +268,7 @@ public class GridSettings : MonoBehaviour
         {
             var (current, remaining) = queue.Dequeue();
             // 检查当前地块是否包含目标实体
-            if (current.occupied&&current != gridSettings)
+            if (current.occupiedbyUnit&&current != gridSettings)
             {
                 T entity = current.GetOccupied<T>(current);
                 if (entity != null && !list.Contains(entity))
@@ -268,17 +288,6 @@ public class GridSettings : MonoBehaviour
                 }
             }
         }
-    }
-    public void MovedColorRestore(GridSettings gridSettings) //移动后恢复颜色
-    {
-        foreach (var a in visited)
-        //用foreach就不让我在循环中清除值(不能访问一个删除一个)，用for的话visited作为HashSet集合是无序的没有索引，好在HashSet有个删除全部的方法
-        {
-            a.rend.material.color = originalColor;
-            a.isInMovementRange = false;
-        }
-            visited.Clear();
-            //将颜色还原的同时清空列表
     }
 
     private void FourWayGridDetection()

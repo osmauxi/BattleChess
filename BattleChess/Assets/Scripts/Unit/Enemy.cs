@@ -75,7 +75,7 @@ public class Enemy : Entity
         Vector3 targetPos = point.transform.position;
         targetPos.y = nowPos.y;
         //设置两点的坐标
-        GetGroundGrid().occupied = false;
+        GetGroundGrid().occupiedbyEnemy = false;
         //走之前先把格子设为未占据
         List<Vector3Int> pathBetweenTwoPoints = GridAchieve.instance.PathFind(point.transform.position);
         Debug.Log(pathBetweenTwoPoints);
@@ -102,8 +102,14 @@ public class Enemy : Entity
         hasActed = true;
         isMoving = false;
         Move = false;
-        GetGroundGrid().occupied = true;
+        GetGroundGrid().occupiedbyEnemy = true;
         //到终点之后将脚底物块设为占据
         isRunning = false;
+    }
+
+    public override void GridOccupiedChange() 
+    {
+        base.GridOccupiedChange();
+        gridSettings.occupiedbyEnemy = false;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
@@ -16,6 +17,10 @@ public class AttackManager : MonoBehaviour
     public Skill skill;
 
     public bool WhatSkillType;//标注是对敌技能还是对友技能,f为对友，t为对敌
+    //default移动
+    private Queue<(GridSettings gridSetting, int movepoint)> queue = new Queue<(GridSettings gridSettings, int remainingPoints)>();
+    public HashSet<GridSettings> visited = new HashSet<GridSettings>();
+    private Color originalColor;
 
     private List<Enemy> canBeattackedEnemy = new List<Enemy>();
     private List<Unit> canBeattackedUnit = new List<Unit>();
@@ -35,7 +40,11 @@ public class AttackManager : MonoBehaviour
     public void PrepareExecuteSkill(int skillIndex)//执行技能
     {
         SelectedUnit = UnitActionSystem.Instance.selectedUnit;
+        if (visited.Count > 0)
+            CanMoveColorRestoreDefault();
         if (SelectedUnit.movePoint == 0)
+            return;
+        if (SelectedUnit.GetComponent<UnitStat>().currentMana - skill.manaCost < 0)
             return;
         skill = SelectedUnit.skills[skillIndex];
         if (skill == null)
@@ -48,7 +57,7 @@ public class AttackManager : MonoBehaviour
         if (skill.type == SkillType.Heal)
         {
             AttackRangeCheck<Unit>(skill.attackRange);
-            if (colorChangedGrids.Count == 0)//没找到能打的人的情况 
+            if (canBeattackedUnit.Count == 0)//没找到能打的人的情况 
             {
                 return;
             }
@@ -57,7 +66,7 @@ public class AttackManager : MonoBehaviour
         else
         {
             AttackRangeCheck<Enemy>(skill.attackRange);
-            if (colorChangedGrids.Count == 0)//没找到能打的人的情况 
+            if (canBeattackedEnemy.Count == 0)//没找到能打的人的情况 
             {
                 return;
             }
@@ -67,53 +76,57 @@ public class AttackManager : MonoBehaviour
     }
     private void AttackRangeCheck<T>(int attackRange)
     {
+        originalColor = SelectedUnit.GetGroundGrid().rend.material.color;
+        SelectedUnit.GetGroundGrid().MovedColorRestore(SelectedUnit.GetGroundGrid());
+        if (skill.range == AttackRangeType.Default)
+        {
+            CanMoveColorChangeDefault<T>(SelectedUnit.GetGroundGrid(), skill.attackRange);
+        }
+        else if (skill.range == AttackRangeType.Straight)
+        {
+            CanMoveColorChangeStraight<T>(SelectedUnit.GetGroundGrid(), skill.attackRange);
+        }
         //先更新一遍列表
-        SelectedUnit.GetGroundGrid().UnitScene<Unit>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.unitList);
-        SelectedUnit.GetGroundGrid().UnitScene<Enemy>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.enemyList);
-        GridSettings currentGrid;
-        if (typeof(T) == typeof(Unit))
-        {
-            foreach (var unit in SelectedUnit.unitList)
-            {
-                if (AttackRangeCheck(unit.gridPosition) <= attackRange)
-                {
-                    currentGrid = unit.GetGroundGrid();
-                    currentGrid.CanAttackColorChange();
-                    colorChangedGrids.Add(currentGrid);
-                    unit.canBeAttacked = true;
-                    currentGrid.isInAttackRange = true;
-                    canBeattackedUnit.Add(unit);
-                }
+        //SelectedUnit.GetGroundGrid().UnitScene<Unit>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.unitList);
+        //SelectedUnit.GetGroundGrid().UnitScene<Enemy>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.enemyList);
+        //GridSettings currentGrid;
+        //if (typeof(T) == typeof(Unit))
+        //{
+        //    foreach (var unit in SelectedUnit.unitList)
+        //    {
+        //        if (AttackRangeCheck(unit.gridPosition) <= attackRange)
+        //        {
+        //            currentGrid = unit.GetGroundGrid();
+        //            currentGrid.CanAttackColorChange();
+        //            colorChangedGrids.Add(currentGrid);
+        //            unit.canBeAttacked = true;
+        //            currentGrid.isInAttackRange = true;
+        //            canBeattackedUnit.Add(unit);
+        //        }
 
-            }
-        }
-        else
-        {
-            foreach (var enemy in SelectedUnit.enemyList)
-            {
-                if (AttackRangeCheck(enemy.gridPosition) <= attackRange)
-                {
-                    currentGrid = enemy.GetGroundGrid();
-                    currentGrid.CanAttackColorChange();
-                    colorChangedGrids.Add(currentGrid);
-                    enemy.canBeAttacked = true;
-                    currentGrid.isInAttackRange = true;
-                    canBeattackedEnemy.Add(enemy);
-                }
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (var enemy in SelectedUnit.enemyList)
+        //    {
+        //        if (AttackRangeCheck(enemy.gridPosition) <= attackRange)
+        //        {
+        //            currentGrid = enemy.GetGroundGrid();
+        //            currentGrid.CanAttackColorChange();
+        //            colorChangedGrids.Add(currentGrid);
+        //            enemy.canBeAttacked = true;
+        //            currentGrid.isInAttackRange = true;
+        //            canBeattackedEnemy.Add(enemy);
+        //        }
 
-            }
-        }
+        //    }
+        //}
     }
 
-    public void AttackedColorRestore()
+    public void AttackedStateRestore()//改攻击状态的
     {
-        foreach (var a in colorChangedGrids) 
-        {
-            a.CanAttackColorRestore();
-            a.isInMovementRange = false;
-        }
-        colorChangedGrids.Clear();
-        foreach (var b in canBeattackedEnemy) 
+        foreach (var b in canBeattackedEnemy)
         {
             b.canBeAttacked = false;
         }
@@ -124,16 +137,122 @@ public class AttackManager : MonoBehaviour
         canBeattackedUnit.Clear();
         canBeattackedEnemy.Clear();
     }
-    //private IEnumerator AttackInputCheck() 
+    //private int AttackRangeCheck(Vector3Int unitPos)//之后可能还会根据攻击方式来进行细分吧
     //{
-    //    if (!Input.GetKey(KeyCode.Mouse1)) 
-    //    {
-    //        yield return 0;
-    //    }
-    //    //还原地块颜色
+    //    return Mathf.Abs(SelectedUnit.gridPosition.x - unitPos.x) + Mathf.Abs(SelectedUnit.gridPosition.z - unitPos.z);
     //}
-    private int AttackRangeCheck(Vector3Int unitPos)//之后可能还会根据攻击方式来进行细分吧
+    #region DefaultARange
+    public void CanMoveColorChangeDefault<T>(GridSettings gridSettings, int attackPoint)
     {
-        return Mathf.Abs(SelectedUnit.gridPosition.x - unitPos.x) + Mathf.Abs(SelectedUnit.gridPosition.z - unitPos.z);
+        // 将角色当前所在的地图格加入队列，初始剩余行动点为角色的行动点
+        queue.Enqueue((gridSettings, attackPoint));
+        visited.Add(gridSettings);
+        // 标记当前地图格不在移动范围内（因为角色已经在该位置）
+
+        // 开始BFS广度优先搜索
+        while (queue.Count > 0)
+        {
+            // 从队列中取出一个地图格和对应的剩余行动点
+            var (current, remaining) = queue.Dequeue();
+
+            // 遍历当前地图格的周围的四个地块，进行依次访问
+            foreach (GridSettings neighbor in current.gridList)
+            {
+                // 检查邻居是否未被访问过，并且剩余行动点足够移动到该邻居
+                if (!visited.Contains(neighbor) && remaining > 0)
+                {
+                    //高亮具象化 后面要改###########################
+                    neighbor.rend.material.color = Color.yellow;
+                    //##############################################
+
+                    if (typeof(T) == typeof(Unit) && neighbor.occupiedbyUnit)
+                    {
+                        canBeattackedUnit.Add(neighbor.GetTargetAbove<Unit>());
+
+                        neighbor.rend.material.color = Color.black;
+
+                        neighbor.isInAttackRange = true;
+                    }
+                    else if (typeof(T) == typeof(Enemy) && neighbor.occupiedbyEnemy)
+                    {
+                        canBeattackedEnemy.Add(neighbor.GetTargetAbove<Enemy>());
+
+                        neighbor.rend.material.color = Color.black;
+
+                        neighbor.isInAttackRange = true;
+                    }
+                    // 将该邻居加入访问集合
+                    visited.Add(neighbor);
+                    // 计算移动到该邻居后剩余的行动点
+                    int newRemaining = remaining - 1;
+                    // 将该邻居和新的剩余行动点加入队列，继续搜索
+                    queue.Enqueue((neighbor, newRemaining));
+                }
+            }
+        }
     }
+
+    public void CanMoveColorRestoreDefault()
+    {
+        foreach (var a in visited)
+        {
+            a.rend.material.color = originalColor;
+            a.isInMovementRange = false;
+        }
+        visited.Clear();
+    }
+    #endregion
+    #region StraightRange
+    public void CanMoveColorChangeStraight<T>(GridSettings gridSettings, int attackPoint)
+    {
+        queue.Enqueue((gridSettings, attackPoint));
+        visited.Add(gridSettings);
+
+        while (queue.Count > 0)
+        {
+            var (current, remaining) = queue.Dequeue();
+            foreach (var neighbor in current.gridList)
+            {
+                //将邻居与原点比坐标，xz轴都有数说明不在一条直线上
+                Vector3Int Dir = gridSettings.gridCellPosition - neighbor.gridCellPosition;
+                // 仅处理十字方向（x或y变化量为±1，另一个为0）
+                if (Mathf.Abs(Dir.x)> 0 && Mathf.Abs(Dir.z) > 0)
+                {
+                    continue; // 跳过非十字方向的邻居
+                }
+
+                // 检查邻居是否未被访问且剩余行动点足够
+                if (!visited.Contains(neighbor) && remaining > 0)
+                {
+                    // 高亮显示（后续可调整颜色逻辑）
+                    neighbor.rend.material.color = Color.yellow;
+
+                    // 检测攻击目标
+                    if (typeof(T) == typeof(Unit) && neighbor.occupiedbyUnit)
+                    {
+                        canBeattackedUnit.Add(neighbor.GetTargetAbove<Unit>());
+                        neighbor.rend.material.color = Color.black;
+                        neighbor.isInAttackRange = true;
+                    }
+                    else if (typeof(T) == typeof(Enemy) && neighbor.occupiedbyEnemy)
+                    {
+                        canBeattackedEnemy.Add(neighbor.GetTargetAbove<Enemy>());
+                        neighbor.rend.material.color = Color.black;
+                        neighbor.isInAttackRange = true;
+                    }
+
+                    visited.Add(neighbor);
+                    int newRemaining = remaining - 1; // 移动消耗1点行动点
+                    queue.Enqueue((neighbor, newRemaining));
+
+                }
+
+            }
+        }
+    }
+    public void CanMoveColorRestoreStraight()
+    {
+
+    }
+    #endregion
 }

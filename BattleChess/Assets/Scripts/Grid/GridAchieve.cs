@@ -121,7 +121,6 @@ public class GridAchieve : MonoBehaviour
             // 如果当前节点是目标节点，回溯路径
             if (currentNode.position == endPos || offSetFix)
             {
-                Debug.Log("FindPath");
                 offSetFix = false;
                 return RetracePath(startNode, currentNode);
             }
@@ -184,20 +183,16 @@ public class GridAchieve : MonoBehaviour
         {
             Vector3Int neighborPos = node.position + direction;
             //Vector3Int[]里全是单位向量，在本地块的坐标上+1就是相邻地块的坐标了，allGridPos有所有地块的坐标集，找得到就在通过值和键的对应找到对应的GridSettings实例
-            if (allGridPos.TryGetValue(neighborPos, out GridSettings neighborGrid) && !neighborGrid.occupied)
+            if (allGridPos.TryGetValue(neighborPos, out GridSettings neighborGrid) && !neighborGrid.occupiedbyUnit && !neighborGrid.occupiedbyEnemy)
             //TryGetValue尝试获取与指定键关联的值，而不会像直接通过索引访问那样在键不存在时抛出异常
             //这里一个方法将下面两个语句合在一起了                
             //allGridPos.ContainsKey(neighborPos)
             //GridSettings neighborGrid = allGridPos[neighborPos];
             {
                 //访问周围四个地块，将没有被占据(能移动的)地块加入list，当前为中心的最佳地块就成了父物体，周围四个中的最佳地块会成为中心地块的子物体
-                bool isPassable = !neighborGrid.occupied;
-                //把阻挡的地块排除
-                if (isPassable)
-                {
-                    //Debug.Log($"有效邻居：{neighborPos}");
-                    neighbors.Add(new Node(neighborPos, null, 0, 0));
-                }
+
+                //Debug.Log($"有效邻居：{neighborPos}");
+                neighbors.Add(new Node(neighborPos, null, 0, 0));
             }
             else if (neighborPos == endPos) 
 //我不喜欢一遇到目的地受阻挡就找不到路径空值报错的移动算法，所以加一个偏差补足机制，目的地受阻但是周围四格能走的话就将寻路的上一个格直接当终点走了
@@ -305,7 +300,7 @@ public class GridAchieve : MonoBehaviour
             Vector3Int key = pair.Key;
             GridSettings value = pair.Value;
 
-            Debug.Log($"Key: {key}, GridType: {value.gridType}, Occupied: {value.occupied}");
+            Debug.Log($"Key: {key}, GridType: {value.gridType}, Occupied: {value.occupiedbyUnit}");
         }
     }
 }

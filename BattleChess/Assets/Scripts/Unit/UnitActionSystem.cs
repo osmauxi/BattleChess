@@ -97,7 +97,7 @@ public class UnitActionSystem : MonoBehaviour
                         }
                         GetPathAndChangeColor();
                     }
-                    else if (currentGrid.occupied && currentGrid.isInAttackRange) 
+                    else if (currentGrid.occupiedbyEnemy && currentGrid.isInAttackRange) //右键敌人地块
                     {
                         choosedEne = currentGrid.GetTargetAbove<Enemy>();
                         BattleInfUISet.Instance.SetEnemyUIVisible(true,choosedEne);
@@ -137,7 +137,7 @@ public class UnitActionSystem : MonoBehaviour
             GridSettings targetGrid = hit.collider.GetComponent<GridSettings>();
             if (selectedUnit.movePoint != 0) 
             {
-                if (targetGrid.isInMovementRange & !targetGrid.occupied)
+                if (targetGrid.isInMovementRange & !targetGrid.occupiedbyUnit && !targetGrid.occupiedbyEnemy)
                 //调用脚底下单元格的CanMoveCheck方法传入鼠标选中的方格的脚本信息，限制移动距离
                 {
                     Vector3 movePos = new Vector3(hit.transform.position.x, hit.transform.position.y + correctedDis, hit.transform.position.z);//最终移动到的位置
@@ -145,7 +145,7 @@ public class UnitActionSystem : MonoBehaviour
                     selectedUnit.GridOccupiedChange();//将移动前位置的单元格设为未占据
                     UnitMove(movePos, selectedUnit, selectedUnit.GetGroundGrid(), targetGrid);//移动实现
                 }
-                else if(targetGrid.occupied && targetGrid.isInAttackRange)
+                else if(targetGrid.occupiedbyUnit || targetGrid.occupiedbyEnemy && targetGrid.isInAttackRange)
                 {
                     SkillUse(attackManager.skill, targetGrid);
                     selectedUnit.movePoint = 0;//攻击清零移动点
@@ -157,6 +157,7 @@ public class UnitActionSystem : MonoBehaviour
         if (selectedUnit == true && !groundCatched && !unitCatched)
         {
             DeselectUnit();
+            attackManager.CanMoveColorRestoreDefault();
         }
 
     }
@@ -174,12 +175,14 @@ public class UnitActionSystem : MonoBehaviour
             choosedUnit = targetGrid.GetTargetAbove<Unit>();
             //这里还没写回血函数
         }
-        attackManager.AttackedColorRestore();
+        attackManager.AttackedStateRestore();
+        attackManager.CanMoveColorRestoreDefault();
     }
 
     private void UnitMove(Vector3 Mospos,Unit controlledUnit,GridSettings pathStart,GridSettings pathend)
     {
         selectedUnit.GetGroundGrid().MovedColorRestore(selectedUnit.GetGroundGrid());//这个是移动时稳定在移动前进行颜色还原
+        Debug.Log(1);
         StartCoroutine(MoveAlongPath(selectedUnit,pathend,selectedUnit));
         //不能直接调用MoveAlongPath方法而是用StartCoroutine来引用，不然出现不调用没反应的问题，携程不是很懂
 
@@ -207,7 +210,7 @@ public class UnitActionSystem : MonoBehaviour
                 BattleInfUISet.Instance.updateAllayText();
         }
         controlledUnit.isMoving = false;
-        controlledUnit.GetGroundGrid().occupied = true;
+        controlledUnit.GetGroundGrid().occupiedbyUnit = true;
         //到终点之后将脚底物块设为占据
         //selectedUnit.GetGroundGrid().UnitScene<Unit>(selectedUnit.GetGroundGrid(),selectedUnit.sceneRange,out selectedUnit.unitList);
         //selectedUnit.GetGroundGrid().UnitScene<Enemy>(selectedUnit.GetGroundGrid(), selectedUnit.sceneRange, out selectedUnit.enemyList);
@@ -259,7 +262,7 @@ public class UnitActionSystem : MonoBehaviour
             selectedUnit = null;
         }
         if (AttackManager.instance.colorChangedGrids.Count != 0)
-            AttackManager.instance.AttackedColorRestore();
+            AttackManager.instance.AttackedStateRestore();
         BattleInfUISet.Instance.SetAllayUIVisible(false);
         ShowActionMenu(false);
     }

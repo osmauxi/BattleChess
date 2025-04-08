@@ -9,6 +9,12 @@ public enum SkillType
     MagicAttack,
     AllRoundAttack
 }
+
+public enum AttackRangeType //只有菱形区域的攻击范围方式有点单调了
+{
+    Default,
+    Straight,//十字攻击范围
+}
 #region
 
 //普通类不能被序列化，也就无法在inspector中可见，为了解决这个问题就要使用[System.Serializable]
@@ -52,6 +58,7 @@ public class Skill
 {
     //这里用readonly标明每个技能一定会有的基础值，readonly是必须在声明时就要赋值的值
     public readonly SkillType type;
+    public readonly AttackRangeType range;
     public readonly string name;
     public readonly int skillNum;//技能编号
     public readonly int attackRange;
@@ -66,11 +73,12 @@ public class Skill
     //构造函数内需要直接传值的只有readonly类的值，也就是所有技能都有的信息，剩下的值分装在类里面，这样的好处是创建一个技能时
     //只需要传入对应需要的数值就可以了，而不是Skill skill(10，2，0，0，0，0，0，0，0)这样的灾难
     //并且灵活，新种类的技能只需要新写一个类，然后在构造函数里引用并写入switch函数就行了
-    public Skill(SkillType type, string name, int skillNum,int manaCost, int attackRange, float skillDamageFix,
+    public Skill(SkillType type,AttackRangeType range, string name, int skillNum,int manaCost, int attackRange, float skillDamageFix,
          HealParams healParams = null,AttackParams attackParams = null,AllRoundAttackParams allRoundAttackParams = null, MagicAttackParams magicAttackParams = null)
     //这些类声明一个技能时不会用完，只会用其中一个，所以优先设为null
     {
         this.type = type;
+        this.range = range;
         this.name = name;
         this.skillNum = skillNum;
         this.manaCost = manaCost;

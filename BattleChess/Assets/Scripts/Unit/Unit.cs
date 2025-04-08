@@ -48,4 +48,10 @@ public class Unit : Entity
             OnDeselected?.Invoke();
         }
     }
+
+    public override void GridOccupiedChange()
+    {
+        base.GridOccupiedChange();
+        gridSettings.occupiedbyUnit = false;
+    }
 }

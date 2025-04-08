@@ -77,9 +77,8 @@ public class Entity : MonoBehaviour
         return gridSettings;
     }
 
-    public void GridOccupiedChange() //修改当前脚下的gird的occupied值
+    public virtual void GridOccupiedChange() //修改当前脚下的gird的occupied值
     {
         MovedGroundCheck();
-        gridSettings.occupied = false;
     }
 }
