@@ -3,72 +3,12 @@
   "WorkspaceRootPath": "D:\\UnityProjects\\BattleChess\\BattleChess\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\stats\\attackmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|d:\\unityprojects\\battlechess\\battlechess\\assets\\scripts\\stats\\attackmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\stats\\attackmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|d:\\unityprojects\\battlechess\\battlechess\\assets\\scripts\\unit\\unitactionsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\unit\\unitactionsystem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\characters\\warrior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\characters\\warrior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\skill\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|d:\\unityprojects\\battlechess\\battlechess\\assets\\scripts\\skill\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\skill\\skill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\grid\\gridachieve.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\grid\\gridachieve.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\grid\\gridsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\grid\\gridsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\unit\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\unit\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\unit\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\unit\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\turn_base\\turn_basedmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\turn_base\\turn_basedmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\stats\\characterstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\stats\\characterstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\ui\\buttonhoverhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\buttonhoverhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\ui\\healthbarui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\healthbarui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\ui\\battleinfuiset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\battleinfuiset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\characters\\carrermanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\characters\\carrermanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\stats\\unitstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\stats\\unitstat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\ui\\grounduiappearcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ui\\grounduiappearcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|D:\\UnityProjects\\BattleChess\\BattleChess\\assets\\scripts\\stats\\enemystat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{325B4395-E67C-4BE9-DFD4-388A4A837EAC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\stats\\enemystat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -78,46 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Entity.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\Entity.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Unit\\Entity.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\Entity.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Unit\\Entity.cs",
-              "ViewState": "AgIAADoAAAAAAAAAAAAuwE8AAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-07T12:16:14.022Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Skill.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Skill\\Skill.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Skill\\Skill.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Skill\\Skill.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Skill\\Skill.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAcwDwAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T11:41:36.687Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Warrior.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Characters\\Warrior.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Characters\\Warrior.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Characters\\Warrior.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Characters\\Warrior.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T12:20:00.528Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -126,169 +28,23 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\Stats\\AttackManager.cs",
               "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\AttackManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\Stats\\AttackManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAH4AAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-03T09:16:33.135Z",
+              "WhenOpened": "2025-07-22T01:53:19.7Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "GridSettings.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Grid\\GridSettings.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Grid\\GridSettings.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Grid\\GridSettings.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Grid\\GridSettings.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAkwGEAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T03:34:52.103Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Enemy.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\Enemy.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Unit\\Enemy.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\Enemy.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Unit\\Enemy.cs",
-              "ViewState": "AgIAAFcAAAAAAAAAAAAYwHAAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T02:59:12.204Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "UnitActionSystem.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\UnitActionSystem.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Unit\\UnitActionSystem.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Unit\\UnitActionSystem.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Unit\\UnitActionSystem.cs",
-              "ViewState": "AgIAAKMAAAAAAAAAAAAhwIsAAABrAAAAAAAAAA==",
+              "Title": "Skill.cs",
+              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Skill\\Skill.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Skill\\Skill.cs",
+              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Skill\\Skill.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Skill\\Skill.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T01:51:50.882Z",
+              "WhenOpened": "2025-07-22T01:52:48.831Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "GridAchieve.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Grid\\GridAchieve.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Grid\\GridAchieve.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Grid\\GridAchieve.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Grid\\GridAchieve.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAIwEUAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T02:54:46.89Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "ButtonHoverHandler.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\ButtonHoverHandler.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\UI\\ButtonHoverHandler.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\ButtonHoverHandler.cs",
-              "RelativeToolTip": "Assets\\Scripts\\UI\\ButtonHoverHandler.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T05:46:27.73Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Turn_basedmanager.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Turn_base\\Turn_basedmanager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Turn_base\\Turn_basedmanager.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Turn_base\\Turn_basedmanager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Turn_base\\Turn_basedmanager.cs",
-              "ViewState": "AgIAAJAAAAAAAAAAAAD4v6MAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-03T10:16:30.881Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "CharacterStat.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\CharacterStat.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Stats\\CharacterStat.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\CharacterStat.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Stats\\CharacterStat.cs",
-              "ViewState": "AgIAACgAAAAAAAAAAAAWwEIAAABLAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T11:14:35.919Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "HealthBarUI.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\HealthBarUI.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\UI\\HealthBarUI.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\HealthBarUI.cs",
-              "RelativeToolTip": "Assets\\Scripts\\UI\\HealthBarUI.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T06:26:21.052Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "BattleInfUISet.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\BattleInfUISet.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\UI\\BattleInfUISet.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\BattleInfUISet.cs",
-              "RelativeToolTip": "Assets\\Scripts\\UI\\BattleInfUISet.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T13:04:50.057Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "CarrerManager.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Characters\\CarrerManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Characters\\CarrerManager.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Characters\\CarrerManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Characters\\CarrerManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAADwvwcAAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-04T15:17:49.516Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "UnitStat.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\UnitStat.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Stats\\UnitStat.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\UnitStat.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Stats\\UnitStat.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T12:11:41.287Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "GroundUIAppearController.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\GroundUIAppearController.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\UI\\GroundUIAppearController.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\UI\\GroundUIAppearController.cs",
-              "RelativeToolTip": "Assets\\Scripts\\UI\\GroundUIAppearController.cs",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAQwHcAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T02:41:35.556Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "EnemyStat.cs",
-              "DocumentMoniker": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\EnemyStat.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Stats\\EnemyStat.cs",
-              "ToolTip": "D:\\UnityProjects\\BattleChess\\BattleChess\\Assets\\Scripts\\Stats\\EnemyStat.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Stats\\EnemyStat.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAADwvwkAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T12:11:40.783Z"
             }
           ]
         }

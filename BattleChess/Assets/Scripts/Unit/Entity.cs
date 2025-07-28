@@ -10,6 +10,7 @@ public class Entity : MonoBehaviour
     public int MaxMovepoint;
     //回合制管理器里需要刷新角色移动状态和移动点，所以要一个最大值存储，但是MaxMovepoint和movePoint都public总觉得不太好
     public int movePoint;
+    public UnitState state;
 
     [Header("属性")]
     public bool isMoving = false;
@@ -32,6 +33,7 @@ public class Entity : MonoBehaviour
         InitializeGroundGrid();
         GetGroundGrid();
         movePoint = MaxMovepoint;
+        state = GetComponent<UnitState>();
     }
     protected virtual void Update()
     {

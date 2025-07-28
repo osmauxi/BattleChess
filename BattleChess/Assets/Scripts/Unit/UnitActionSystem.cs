@@ -157,35 +157,89 @@ public class UnitActionSystem : MonoBehaviour
         if (selectedUnit == true && !groundCatched && !unitCatched)
         {
             DeselectUnit();
-            attackManager.CanMoveColorRestoreDefault();
+            attackManager.CanMoveColorRestore();
         }
 
     }
 
     public void SkillUse(Skill skill,GridSettings targetGrid) //给attackmanager传skill到这个方法里进行使用
     {
+        selectedUnit.state.stateMachine.ChangeState(selectedUnit.state.attackState);
         if (attackManager.WhatSkillType) //对敌
         {
-            choosedEne.GetComponent<EnemyStat>().DoDamage(skill);
-            choosedEne.GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+            if (skill.range == AttackRangeType.Straight)
+            {
+                choosedEne.GetComponent<EnemyStat>().DoDamage(skill, selectedUnit.GetComponent<CharacterStat>());
+                choosedEne.GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+                AttackAllUnitOnPath(skill, targetGrid);
+            }
+            else 
+            {
+                choosedEne.GetComponent<EnemyStat>().DoDamage(skill,selectedUnit.GetComponent<CharacterStat>());
+                choosedEne.GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+            }
             BattleInfUISet.Instance.SetEnemyUIVisible(false, choosedEne);
         }
         else if (!attackManager.WhatSkillType) 
+
         {
             choosedUnit = targetGrid.GetTargetAbove<Unit>();
             //这里还没写回血函数
         }
+        selectedUnit.state.stateMachine.ChangeState(selectedUnit.state.attackState);
         attackManager.AttackedStateRestore();
-        attackManager.CanMoveColorRestoreDefault();
+        attackManager.CanMoveColorRestore();
+        selectedUnit.GetComponent<UnitStat>().currentMana -= skill.manaCost;//减少释放者的蓝
+    }
+
+    private void AttackAllUnitOnPath(Skill skill, GridSettings targetGrid)
+    {
+        Vector3Int targetPos = targetGrid.gridCellPosition;
+        Vector3Int originPos = selectedUnit.GetGroundGrid().gridCellPosition;
+        int GameProtect = 0;
+        while (targetPos != originPos)
+        {
+            Vector3Int pos = originPos - targetGrid.gridCellPosition;
+            GameProtect++;
+            foreach (var a in targetGrid.gridList)
+            {
+                Vector3Int P = originPos - a.gridCellPosition;
+                if (a.gridCellPosition == originPos) 
+                {
+                    targetPos = originPos;
+                    break;
+                }
+                if ((pos.x == 0 && pos.z != 0 && P.x == 0 && pos.z - P.z == -1) || (pos.z == 0 && pos.x != 0 && P.z == 0 && pos.x - P.x == 1))
+                {//不知道为什么z轴减下来是-1
+                    targetGrid = a;
+                    targetPos = a.gridCellPosition;
+                    if (a.occupiedbyEnemy)
+                    {
+                        a.GetTargetAbove<Enemy>().GetComponent<EnemyStat>().DoDamage(skill, selectedUnit.GetComponent<CharacterStat>());
+                        a.GetTargetAbove<Enemy>().GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+                    }
+                    else if (a.occupiedbyUnit)
+                    {
+                        a.GetTargetAbove<Unit>().GetComponent<UnitStat>().DoDamage(skill, selectedUnit.GetComponent<CharacterStat>());
+                        a.GetTargetAbove<Unit>().GetComponentInChildren<HealthBarUI>().UpdateHealthUI();
+                    }
+                }
+            }
+            if (GameProtect >= 20) 
+                //防止出问题无限循环卡死游戏
+            {
+                Debug.Log("Wrong");
+                break;
+            }
+        }
     }
 
     private void UnitMove(Vector3 Mospos,Unit controlledUnit,GridSettings pathStart,GridSettings pathend)
     {
         selectedUnit.GetGroundGrid().MovedColorRestore(selectedUnit.GetGroundGrid());//这个是移动时稳定在移动前进行颜色还原
-        Debug.Log(1);
         StartCoroutine(MoveAlongPath(selectedUnit,pathend,selectedUnit));
         //不能直接调用MoveAlongPath方法而是用StartCoroutine来引用，不然出现不调用没反应的问题，携程不是很懂
-
+        selectedUnit.state.stateMachine.ChangeState(selectedUnit.state.moveState);
 
     }
     private IEnumerator MoveAlongPath(Unit unit,GridSettings pathend,Unit controlledUnit)
@@ -214,13 +268,13 @@ public class UnitActionSystem : MonoBehaviour
         //到终点之后将脚底物块设为占据
         //selectedUnit.GetGroundGrid().UnitScene<Unit>(selectedUnit.GetGroundGrid(),selectedUnit.sceneRange,out selectedUnit.unitList);
         //selectedUnit.GetGroundGrid().UnitScene<Enemy>(selectedUnit.GetGroundGrid(), selectedUnit.sceneRange, out selectedUnit.enemyList);
+        selectedUnit.state.stateMachine.ChangeState(selectedUnit.state.idleState);
         if (controlledUnit.movePoint == 0)        
         {
             controlledUnit.hasActed = true;
             DeselectUnit();
         }
         pathend.CanMoveColorChange(pathend, controlledUnit.movePoint);
-       
     }
 
     private bool CheckAnyMoving() 

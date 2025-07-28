@@ -133,7 +133,7 @@ public class GridSettings : MonoBehaviour
 
     public T GetTargetAbove<T>() where T : Entity//获取上方单位
     {
-        //Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance);
+        //Debug.Log(Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, UnitActionSystem.Instance.unitLayer));
         if (Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, UnitActionSystem.Instance.unitLayer))
         {
             // 尝试获取目标对象的泛型组件
@@ -208,6 +208,47 @@ public class GridSettings : MonoBehaviour
             }
         }
     }
+    public GridSettings DefenceGridSelect(GridSettings startGrid,GridSettings unitGrid,int movePoint) 
+    {
+    // 将角色当前所在的地图格加入队列，初始剩余行动点为角色的行动点
+        queue.Enqueue((startGrid, movePoint));
+        visited.Add(startGrid);
+        // 标记当前地图格不在移动范围内（因为角色已经在该位置）
+        startGrid.isInMovementRange = false;
+        GridSettings targetGrid = startGrid;
+        // 开始BFS广度优先搜索
+        while (queue.Count > 0)
+        {
+            // 从队列中取出一个地图格和对应的剩余行动点
+            var (current, remaining) = queue.Dequeue();
+
+            // 遍历当前地图格的周围的四个地块，进行依次访问
+            foreach (GridSettings neighbor in current.gridList)
+            {
+                // 检查邻居是否未被访问过，并且剩余行动点足够移动到该邻居
+                if (!visited.Contains(neighbor) && remaining >= neighbor.finalMovingCosts && !neighbor.occupiedbyUnit && !neighbor.occupiedbyEnemy)
+                {
+                    int finalDis = 0;
+                    if (GetManhattanDistance(startGrid.gridCellPosition, unitGrid.gridCellPosition) > finalDis) 
+                    {
+                        targetGrid = neighbor;
+                    }
+                    // 将该邻居加入访问集合
+                    visited.Add(neighbor);
+                    // 计算移动到该邻居后剩余的行动点
+                    int newRemaining = remaining - neighbor.finalMovingCosts;
+                    // 将该邻居和新的剩余行动点加入队列，继续搜索
+                    queue.Enqueue((neighbor, newRemaining));
+                }
+            }
+        }
+        return targetGrid;
+    }
+    private int GetManhattanDistance(Vector3Int startPos, Vector3Int endPos)
+    {
+        return Mathf.Abs(startPos.x - endPos.x) + Mathf.Abs(startPos.z - endPos.z);
+        //Abs求绝对值的，求出曼哈顿距离
+    }
     public void MovedColorRestore(GridSettings gridSettings) //移动后恢复颜色
     {
         foreach (var a in visited)
@@ -224,7 +265,7 @@ public class GridSettings : MonoBehaviour
         // where T : Entity约束了泛型T的类型必须继承自Entity，保证了T可以变成Unit或Enemy类型，防止报错
         //用于获取上方占据的类型和脚本
     {
-        if (grid.occupiedbyUnit)
+        if (grid.occupiedbyUnit || grid.occupiedbyEnemy)
         {
             Type type = typeof(T);
             if (type == typeof(Enemy))
@@ -233,7 +274,7 @@ public class GridSettings : MonoBehaviour
                 {
                     if (a.gridPosition == grid.gridCellPosition && a is Entity)
                     {
-                        //Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
                         return a as T;
                     }
                 }
@@ -244,7 +285,7 @@ public class GridSettings : MonoBehaviour
                 {
                     if (a.gridPosition == grid.gridCellPosition && a is Entity)
                     {
-                        //Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
+                        Debug.Log($"检测到实体：{a.GetType().Name}，位置：{grid.gridCellPosition}");
                         return a as T;
                     }
                 }
@@ -262,13 +303,12 @@ public class GridSettings : MonoBehaviour
         HashSet<GridSettings> visited = new HashSet<GridSettings>();
         queue.Enqueue((gridSettings, checkRange));
         visited.Add(gridSettings);
-
         // 开始BFS广度优先搜索
         while (queue.Count > 0)
         {
             var (current, remaining) = queue.Dequeue();
             // 检查当前地块是否包含目标实体
-            if (current.occupiedbyUnit&&current != gridSettings)
+            if (current.occupiedbyUnit || current.occupiedbyEnemy && current != gridSettings)
             {
                 T entity = current.GetOccupied<T>(current);
                 if (entity != null && !list.Contains(entity))
@@ -290,6 +330,12 @@ public class GridSettings : MonoBehaviour
         }
     }
 
+    public void ResetAllOccupiedInf() 
+    {
+        isInAttackRange = false;
+        occupiedbyEnemy = false;
+        occupiedbyUnit = false;
+    }
     private void FourWayGridDetection()
     {
         gridList.Clear();

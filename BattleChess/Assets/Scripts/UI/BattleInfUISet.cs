@@ -18,6 +18,7 @@ public class BattleInfUISet : MonoBehaviour
     [SerializeField] private TextMeshProUGUI DamageText;
     [SerializeField] private TextMeshProUGUI EvationText;
     [SerializeField] private TextMeshProUGUI MovePInf;
+    [SerializeField] private TextMeshProUGUI ManaInf;
     [Header("µ–»ÀUI")]
     [SerializeField] private TextMeshProUGUI ENameText;
     [SerializeField] private TextMeshProUGUI EHealthText;
@@ -100,7 +101,8 @@ public class BattleInfUISet : MonoBehaviour
     {
         CharacterStat selectedUnitStat = UnitActionSystem.Instance.selectedUnit.GetComponent<CharacterStat>();
         NameText.text = selectedUnitStat.name;
-        HealthText.text = new string(selectedUnitStat.maxhealth.GetValue().ToString() + "/" + selectedUnitStat.currenthealth);
+        HealthText.text = new string(selectedUnitStat.currenthealth + "/" + selectedUnitStat.maxhealth.GetValue().ToString());
+        ManaInf.text = new string(selectedUnitStat.currentMana.ToString() + "/" + selectedUnitStat.maxMana.GetValue().ToString());
         DamageText.text = selectedUnitStat.damage.GetValue().ToString();
         EvationText.text = selectedUnitStat.evasion.GetValue().ToString();
         MovePInf.text = UnitActionSystem.Instance.selectedUnit.movePoint.ToString();
@@ -108,7 +110,8 @@ public class BattleInfUISet : MonoBehaviour
     public void updateAllayText() 
     {
         CharacterStat selectedUnitStat = UnitActionSystem.Instance.selectedUnit.GetComponent<CharacterStat>();
-        HealthText.text = new string(selectedUnitStat.maxhealth.GetValue().ToString() + "/" + selectedUnitStat.currenthealth);
+        HealthText.text = new string(selectedUnitStat.currenthealth + "/" + selectedUnitStat.maxhealth.GetValue().ToString());
+        ManaInf.text = new string(selectedUnitStat.currentMana.ToString() + "/" + selectedUnitStat.maxMana.GetValue().ToString());
         MovePInf.text = UnitActionSystem.Instance.selectedUnit.movePoint.ToString();
     }
 

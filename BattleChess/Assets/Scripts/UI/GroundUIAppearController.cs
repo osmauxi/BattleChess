@@ -1,4 +1,4 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -120,7 +120,6 @@ public class UIAppearController : MonoBehaviour
         }
         Vector2 offset = new Vector2(Xoffset, Yoffset);
         Vector2 targetPos = localPoint + offset;
-
         Vector2 clampedPosition = ClampPositionToScreen(targetPos);
         UIAppearController.instance.hoverImage.anchoredPosition = clampedPosition;
         //RectTransform.anchoredPosition 是 Unity 引擎中用于处理 UI 布局的重要属性，它和 RectTransform 组件紧密相关。
@@ -147,15 +146,22 @@ public class UIAppearController : MonoBehaviour
         float pivotOffsetY = imageHeight * imageRect.pivot.y;
 
         // 计算边界
-        float minX = -canvasSize.x / 2 + pivotOffsetX;
-        float maxX = canvasSize.x / 2 - (imageWidth - pivotOffsetX);
+        float minX = -canvasSize.x / 2 + pivotOffsetX + 100f;
+        float maxX = canvasSize.x / 2 - (imageWidth - pivotOffsetX)-100f;
         float minY = -canvasSize.y / 2 + pivotOffsetY;
         float maxY = canvasSize.y / 2 - (imageHeight - pivotOffsetY);
 
+        //Debug.Log(maxY);
+        //Debug.Log(maxX);
+        //Debug.Log(minX);
+        //Debug.Log(minY);
+        //Debug.Log(targetPosition.x);
+        //Debug.Log(targetPosition.y);
         // 限制位置
         float clampedX = Mathf.Clamp(targetPosition.x, minX, maxX);
         float clampedY = Mathf.Clamp(targetPosition.y, minY, maxY);
-
+        Debug.Log(clampedX);
+        Debug.Log(clampedY);
         return new Vector2(clampedX, clampedY);
     }
 

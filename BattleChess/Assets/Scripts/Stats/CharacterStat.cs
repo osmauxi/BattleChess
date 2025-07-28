@@ -39,16 +39,17 @@ public class CharacterStat : MonoBehaviour
         currentMana = maxMana.GetValue();
     }
 
-    public void DoDamage(Skill skill) // 计算伤害所要调用的函数
+    public void DoDamage(Skill skill,CharacterStat attackStat) // 计算伤害所要调用的函数
     {
         if(CouldEvade())
             return;
 
-        int totalDamage = Mathf.RoundToInt((damage.GetValue() + skill.damage - armor.GetValue() + 
+        int totalDamage = Mathf.RoundToInt((attackStat.damage.GetValue() + skill.damage - armor.GetValue() + 
             (skill.firedamage + skill.icedamage - magicresistance.GetValue()))* skill.skillDamageFix);
-        if (UnitActionSystem.selectedUnit.GetComponent<CharacterStat>().CouldCrit())
+        if (attackStat.CouldCrit())
             //dodamage函数是由攻击对象传入技能调用被攻击对象的dodamage函数，这里比较绕，一定要搞清你在判断攻击者还是被攻击者的条件
-             totalDamage =  GetCritDamage(totalDamage);
+            totalDamage = attackStat.GetCritDamage(totalDamage);
+        Mathf.Clamp(totalDamage,0,int.MaxValue);
         SetSkillNegativeEffects(skill);
         DecreaceHealth(totalDamage);
     }
@@ -64,6 +65,7 @@ public class CharacterStat : MonoBehaviour
     private void Die()
     {
         Destroy(gameObject);
+        gameObject.GetComponent<Entity>().GetGroundGrid().ResetAllOccupiedInf();
         TurnBasedManager.Instance.enemyUnits.Remove(GetComponent<Enemy>());
     }
 
@@ -88,24 +90,29 @@ public class CharacterStat : MonoBehaviour
     {
         if (skill.buffType == null)
             return;
-        if (skill.buffType == "Ignited")
-        {
-           UnitActionSystem.choosedEne.GetComponent<CharacterStat>().isIgnited = true;
-        }
-        else if (skill.buffType == "Chilled") 
-        {
-            UnitActionSystem.choosedEne.GetComponent<CharacterStat>().isChilled = true;
-        }
-        if (isIgnited && isChilled) //这两种状态不同时存在
-        {
-            isChilled = false;
-            isIgnited = false;
-        }
-        else 
-        {
-            buffLevel++;
-            UnitActionSystem.choosedEne.GetComponent<CharacterStat>().continuousRound = skill.buffDuration;
-        }
+
+            if (skill.buffType == "Ignited")
+            {
+                isIgnited = true;
+            }
+            else if (skill.buffType == "Chilled")
+            {
+                isChilled = true;
+            }
+            if (isIgnited && isChilled) //这两种状态不同时存在
+            {
+                isChilled = false;
+                isIgnited = false;
+            }
+            else
+            {
+                buffLevel++;
+                if (TurnBasedManager.Instance.currentState == TurnState.PlayerControlled)
+                    UnitActionSystem.choosedEne.GetComponent<CharacterStat>().continuousRound = skill.buffDuration;
+                else if (TurnBasedManager.Instance.currentState == TurnState.EnemyUnitActing)
+                    AttackManager.instance.attackEnemy.GetComponent<Enemy>().targetUnit.GetComponent<CharacterStat>().continuousRound = skill.buffDuration;
+            }
+        
     }
 
     public void SkillNegativeEffectsUse() 

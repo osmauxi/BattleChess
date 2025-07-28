@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class AttackManager : MonoBehaviour
 {
     public static AttackManager instance;
-
+  
     public GameObject DamageNumPrefab;
     public Vector3 offset;
 
@@ -21,6 +20,7 @@ public class AttackManager : MonoBehaviour
     private Queue<(GridSettings gridSetting, int movepoint)> queue = new Queue<(GridSettings gridSettings, int remainingPoints)>();
     public HashSet<GridSettings> visited = new HashSet<GridSettings>();
     private Color originalColor;
+    public Enemy attackEnemy;
 
     private List<Enemy> canBeattackedEnemy = new List<Enemy>();
     private List<Unit> canBeattackedUnit = new List<Unit>();
@@ -41,7 +41,7 @@ public class AttackManager : MonoBehaviour
     {
         SelectedUnit = UnitActionSystem.Instance.selectedUnit;
         if (visited.Count > 0)
-            CanMoveColorRestoreDefault();
+            CanMoveColorRestore();
         if (SelectedUnit.movePoint == 0)
             return;
         if (SelectedUnit.GetComponent<UnitStat>().currentMana - skill.manaCost < 0)
@@ -56,7 +56,7 @@ public class AttackManager : MonoBehaviour
         BattleInfUISet.Instance.SetSkillText(skill);
         if (skill.type == SkillType.Heal)
         {
-            AttackRangeCheck<Unit>(skill.attackRange);
+            UAttackRangeCheck<Unit>(skill.attackRange);
             if (canBeattackedUnit.Count == 0)//没找到能打的人的情况 
             {
                 return;
@@ -65,16 +65,53 @@ public class AttackManager : MonoBehaviour
         }
         else
         {
-            AttackRangeCheck<Enemy>(skill.attackRange);
+            UAttackRangeCheck<Enemy>(skill.attackRange);
             if (canBeattackedEnemy.Count == 0)//没找到能打的人的情况 
             {
                 return;
             }
             WhatSkillType = true;
         }
-        SelectedUnit.GetComponent<UnitStat>().currentMana -= skill.manaCost;//减少释放者的蓝
     }
-    private void AttackRangeCheck<T>(int attackRange)
+    public void EPrepareExecuteSkill(Skill _skill,Enemy enemy)
+    {
+        if (_skill == null)
+        {
+            Debug.Log("Skill Lost");
+            return;
+        }
+        if (visited.Count > 0)
+            CanMoveColorRestore();
+        if (enemy.movePoint == 0)
+            return;
+        if (enemy.GetComponent<EnemyStat>().currentMana - _skill.manaCost < 0)
+            return;
+        attackEnemy = enemy;
+        skill = _skill;
+        if (_skill.type == SkillType.Heal)
+        {
+            EAttackRangeCheck<Enemy>(_skill.attackRange);
+            if (canBeattackedUnit.Count == 0)//没找到能打的人的情况 
+            {
+                return;
+            }
+            WhatSkillType = false;
+        }
+        else
+        {
+            EAttackRangeCheck<Unit>(_skill.attackRange);
+            if (canBeattackedEnemy.Count == 0)//没找到能打的人的情况 
+            {
+                return;
+            }
+            WhatSkillType = true;
+        }
+        
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //enemy.GetComponent<EnemyStat>().currentMana -= _skill.manaCost;//减少释放者的蓝
+    }
+    private void UAttackRangeCheck<T>(int attackRange)
     {
         originalColor = SelectedUnit.GetGroundGrid().rend.material.color;
         SelectedUnit.GetGroundGrid().MovedColorRestore(SelectedUnit.GetGroundGrid());
@@ -86,42 +123,19 @@ public class AttackManager : MonoBehaviour
         {
             CanMoveColorChangeStraight<T>(SelectedUnit.GetGroundGrid(), skill.attackRange);
         }
-        //先更新一遍列表
-        //SelectedUnit.GetGroundGrid().UnitScene<Unit>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.unitList);
-        //SelectedUnit.GetGroundGrid().UnitScene<Enemy>(SelectedUnit.GetGroundGrid(), skill.attackRange, out SelectedUnit.enemyList);
-        //GridSettings currentGrid;
-        //if (typeof(T) == typeof(Unit))
-        //{
-        //    foreach (var unit in SelectedUnit.unitList)
-        //    {
-        //        if (AttackRangeCheck(unit.gridPosition) <= attackRange)
-        //        {
-        //            currentGrid = unit.GetGroundGrid();
-        //            currentGrid.CanAttackColorChange();
-        //            colorChangedGrids.Add(currentGrid);
-        //            unit.canBeAttacked = true;
-        //            currentGrid.isInAttackRange = true;
-        //            canBeattackedUnit.Add(unit);
-        //        }
-
-        //    }
-        //}
-        //else
-        //{
-        //    foreach (var enemy in SelectedUnit.enemyList)
-        //    {
-        //        if (AttackRangeCheck(enemy.gridPosition) <= attackRange)
-        //        {
-        //            currentGrid = enemy.GetGroundGrid();
-        //            currentGrid.CanAttackColorChange();
-        //            colorChangedGrids.Add(currentGrid);
-        //            enemy.canBeAttacked = true;
-        //            currentGrid.isInAttackRange = true;
-        //            canBeattackedEnemy.Add(enemy);
-        //        }
-
-        //    }
-        //}
+    }
+    private void EAttackRangeCheck<T>(int attackRange) 
+    {
+        originalColor = attackEnemy.GetGroundGrid().rend.material.color;
+        attackEnemy.GetGroundGrid().MovedColorRestore(attackEnemy.GetGroundGrid());
+        if (skill.range == AttackRangeType.Default)
+        {
+            CanMoveColorChangeDefault<T>(attackEnemy.GetGroundGrid(), skill.attackRange);
+        }
+        else if (skill.range == AttackRangeType.Straight)
+        {
+            CanMoveColorChangeStraight<T>(attackEnemy.GetGroundGrid(), skill.attackRange);
+        }
     }
 
     public void AttackedStateRestore()//改攻击状态的
@@ -137,7 +151,7 @@ public class AttackManager : MonoBehaviour
         canBeattackedUnit.Clear();
         canBeattackedEnemy.Clear();
     }
-    //private int AttackRangeCheck(Vector3Int unitPos)//之后可能还会根据攻击方式来进行细分吧
+    //private int GetNormalizedDistance(Vector3Int unitPos)//之后可能还会根据攻击方式来进行细分吧
     //{
     //    return Mathf.Abs(SelectedUnit.gridPosition.x - unitPos.x) + Mathf.Abs(SelectedUnit.gridPosition.z - unitPos.z);
     //}
@@ -191,16 +205,6 @@ public class AttackManager : MonoBehaviour
             }
         }
     }
-
-    public void CanMoveColorRestoreDefault()
-    {
-        foreach (var a in visited)
-        {
-            a.rend.material.color = originalColor;
-            a.isInMovementRange = false;
-        }
-        visited.Clear();
-    }
     #endregion
     #region StraightRange
     public void CanMoveColorChangeStraight<T>(GridSettings gridSettings, int attackPoint)
@@ -244,15 +248,19 @@ public class AttackManager : MonoBehaviour
                     visited.Add(neighbor);
                     int newRemaining = remaining - 1; // 移动消耗1点行动点
                     queue.Enqueue((neighbor, newRemaining));
-
                 }
 
             }
         }
     }
-    public void CanMoveColorRestoreStraight()
-    {
-
-    }
     #endregion
+    public void CanMoveColorRestore()
+    {
+        foreach (var a in visited)
+        {
+            a.rend.material.color = originalColor;
+            a.isInMovementRange = false;
+        }
+        visited.Clear();
+    }
 }

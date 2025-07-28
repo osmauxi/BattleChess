@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 //回合制管理器
 // 回合状态枚举
@@ -25,6 +26,9 @@ public class TurnBasedManager : MonoBehaviour
     [Header("回合设置")]
     public float aiActionDelay = 0.5f;  // AI行动间隔
     public int currentRound = 1;        // 当前回合数
+    [SerializeField] private Animator anim;
+    [SerializeField] private TextMeshProUGUI turnText;
+    private bool turnStarted = false;
 
     // 单位列表存储需要进行移动的所有单位
     public List<Unit> playerUnits = new List<Unit>();
@@ -90,8 +94,19 @@ public class TurnBasedManager : MonoBehaviour
     // 玩家回合开始阶段
     private IEnumerator HandlePlayerTurnStart()//先重置
     {
-        Debug.Log($"玩家回合开始 - 第{currentRound}回合");
+        BattleCheck.Instance.WinningCheck(); 
+        if (!turnStarted) 
+        {
+            turnText.text = new string("第 " + currentRound + " 回合");
+            Debug.Log(turnText.text);
+            anim.SetTrigger("Update");
+            turnStarted = true;
+            yield return new WaitForSeconds(2f);
 
+            turnText.text = new string("玩家回合");
+            anim.SetTrigger("Update");
+            yield return new WaitForSeconds(.8f);
+        }
         // 重置所有玩家单位状态
         foreach (var unit in playerUnits)
         {
@@ -122,9 +137,11 @@ public class TurnBasedManager : MonoBehaviour
     // 敌人回合开始阶段
     private IEnumerator HandleEnemyTurnStart()
     {
-        Debug.Log($"敌人回合开始");
+        turnText.text = new string("敌人回合");
+        yield return new WaitForSeconds(1.8f);
+        anim.SetTrigger("Update");
         currentState = TurnState.EnemyUnitActing;
-        yield return new WaitForSeconds(1f); // 过渡等待
+        yield return new WaitForSeconds(2.5f); // 过渡等待
     }
 
     // 处理所有敌人行动
@@ -139,12 +156,13 @@ public class TurnBasedManager : MonoBehaviour
             //!!!!!!!!!!!!!!!!!!!!
             enemy.Move = true;
             //!!!!!!!!!!!!!!!!!!!!
+            enemy.hasActed = false;
+            enemy.MakeDecision();
             while (enemy.isMoving != false) 
             {
                 yield return null;
             }
             // 执行AI决策
-            yield return StartCoroutine(ExecuteEnemyAI(enemy));
         }
 
         // 结束回合
@@ -153,7 +171,6 @@ public class TurnBasedManager : MonoBehaviour
     }
     private IEnumerator HandleTurnEnd()
     {
-        Debug.Log($"第{currentRound}回合结束");
         currentRound++;
         foreach (var enemy in enemyUnits)
         //回合跳过之前重置行动点，也可以与HandlePlayerTurnStart的刷新放一块，不过先写在这里
@@ -165,25 +182,8 @@ public class TurnBasedManager : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(1f);
+        turnStarted = false;    
         currentState = TurnState.PlayerTurnStart; // 开始新回合
-    }
-
-    // 执行单个敌人AI逻辑
-    private IEnumerator ExecuteEnemyAI(Enemy enemy)
-    {
-
-        // 简单的AI示例：移动到最近玩家单位
-        Unit nearestPlayer = FindNearestPlayerUnit(enemy.transform.position);
-
-        if (nearestPlayer != null)
-        {
-          
-
-        }
-
-        // 可以在此处添加攻击逻辑
-        yield return null;
-
     }
     // 回合结束处理
     #endregion
