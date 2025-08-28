@@ -1,3 +1,4 @@
+using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class IdleState : State
 
     public override void Enter()
     {
+        SetSpineAnim("idel animation",true);
         base.Enter();
     }
 

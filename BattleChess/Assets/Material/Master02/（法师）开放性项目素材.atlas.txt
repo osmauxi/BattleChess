@@ -1,0 +1,153 @@
+
+（法师）开放性项目素材.png
+size: 2013,1531
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: true
+  xy: 1485, 43
+  size: 251, 379
+  orig: 451, 1526
+  offset: 7, 1068
+  index: -1
+face
+  rotate: false
+  xy: 1784, 413
+  size: 227, 242
+  orig: 259, 1645
+  offset: 23, 1402
+  index: -1
+fashi
+  rotate: false
+  xy: 644, 60
+  size: 82, 102
+  orig: 170, 531
+  offset: 0, 428
+  index: -1
+fazhang
+  rotate: false
+  xy: 2, 53
+  size: 209, 1476
+  orig: 210, 1477
+  offset: 0, 0
+  index: -1
+guang1
+  rotate: false
+  xy: 213, 846
+  size: 434, 683
+  orig: 481, 1090
+  offset: 0, 0
+  index: -1
+guang1 - 副本
+  rotate: false
+  xy: 213, 166
+  size: 429, 678
+  orig: 481, 1090
+  offset: 1, 2
+  index: -1
+guang2
+  rotate: false
+  xy: 649, 910
+  size: 432, 619
+  orig: 432, 620
+  offset: 0, 1
+  index: -1
+guang2 - 副本
+  rotate: false
+  xy: 1083, 913
+  size: 429, 616
+  orig: 432, 620
+  offset: 1, 2
+  index: -1
+guang3
+  rotate: true
+  xy: 1866, 128
+  size: 283, 144
+  orig: 677, 1163
+  offset: 394, 1019
+  index: -1
+houfa1
+  rotate: false
+  xy: 644, 164
+  size: 124, 680
+  orig: 163, 783
+  offset: 1, 5
+  index: -1
+houfa2
+  rotate: true
+  xy: 1020, 65
+  size: 125, 296
+  orig: 218, 534
+  offset: 78, 53
+  index: -1
+qunzi-1
+  rotate: true
+  xy: 1191, 445
+  size: 466, 316
+  orig: 470, 326
+  offset: 1, 8
+  index: -1
+qunzi-2
+  rotate: true
+  xy: 1509, 296
+  size: 495, 273
+  orig: 500, 283
+  offset: 3, 9
+  index: -1
+xiong
+  rotate: true
+  xy: 1318, 2
+  size: 204, 147
+  orig: 210, 452
+  offset: 2, 3
+  index: -1
+youfly
+  rotate: false
+  xy: 1020, 192
+  size: 169, 716
+  orig: 185, 730
+  offset: 1, 12
+  index: -1
+youhand
+  rotate: true
+  xy: 1191, 208
+  size: 235, 292
+  orig: 236, 295
+  offset: 0, 1
+  index: -1
+youleg
+  rotate: false
+  xy: 1825, 657
+  size: 170, 872
+  orig: 483, 1023
+  offset: 225, 3
+  index: -1
+zuofly
+  rotate: false
+  xy: 1514, 793
+  size: 309, 736
+  orig: 575, 1456
+  offset: 149, 617
+  index: -1
+zuohand
+  rotate: true
+  xy: 213, 60
+  size: 104, 429
+  orig: 244, 432
+  offset: 1, 2
+  index: -1
+zuojian
+  rotate: false
+  xy: 1866, 42
+  size: 125, 84
+  orig: 128, 90
+  offset: 2, 2
+  index: -1
+zuoleg
+  rotate: false
+  xy: 770, 122
+  size: 248, 786
+  orig: 251, 788
+  offset: 1, 1
+  index: -1

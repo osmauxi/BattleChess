@@ -10,12 +10,14 @@ public class DeathState : State
 
     public override void Enter()
     {
+        SetSpineAnim("death animation", false);
         base.Enter();
     }
 
     public override void Exit()
     {
         base.Exit();
+        
     }
 
     public override void update()

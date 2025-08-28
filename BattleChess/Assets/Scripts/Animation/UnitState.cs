@@ -1,13 +1,16 @@
+using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
+using static UnityEngine.UI.CanvasScaler;
 
 public class UnitState : MonoBehaviour
 {
     public Animator anim;
     public StateMachine stateMachine;
-
+    public SkeletonAnimation spineAnim;
     //每个状态都有单独实例以便被直接调用在ChangeState()中
     #region States
     public IdleState idleState { get; private set; }
@@ -27,6 +30,8 @@ public class UnitState : MonoBehaviour
         attackState = new AttackState(stateMachine, this, "Attack");
         beAttackState = new BeAttackState(stateMachine, this, "BeAttack");
         deathState = new DeathState(stateMachine, this, "Death");
+
+        spineAnim = GetComponent<SkeletonAnimation>();
     }
     public void Start()
     {
@@ -36,4 +41,14 @@ public class UnitState : MonoBehaviour
     {
         stateMachine.currentState.update();
     }
+
+    public void SetIdle() 
+    {
+        stateMachine.currentState.Exit();
+        stateMachine.ChangeState(idleState);
+        spineAnim.AnimationState.SetAnimation(1,"idel animation",true);
+    }
+
+    public void Methed() { }
 }
+

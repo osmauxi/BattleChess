@@ -10,6 +10,7 @@ public class MoveState : State
 
     public override void Enter()
     {
+        SetSpineAnim("moving animation", true);
         base.Enter();
     }
 

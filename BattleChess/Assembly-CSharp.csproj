@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\MouseWorld.cs" />
     <Compile Include="Assets\Scripts\Unit\UnitActionSystem.cs" />
     <Compile Include="Assets\Scripts\Animation\MoveState.cs" />
+    <Compile Include="Assets\Scripts\UI\Opening\DaggerTrigger.cs" />
     <Compile Include="Assets\Scripts\Grid\GridSettings.cs" />
     <Compile Include="Assets\Scripts\Turn_base\Turn_basedmanager.cs" />
     <Compile Include="Assets\Scripts\Stats\CharacterStat.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Assets\Scripts\Animation\AttackState.cs" />
     <Compile Include="Assets\Scripts\Animation\BeAttackState.cs" />
     <Compile Include="Assets\Scripts\Animation\DeathState.cs" />
+    <Compile Include="Assets\Scripts\UI\Opening\StartUISet.cs" />
     <Compile Include="Assets\Scripts\UI\GroundUIAppearController.cs" />
     <Compile Include="Assets\Scripts\UI\ButtonHoverHandler.cs" />
     <Compile Include="Assets\Scripts\CameraSetting.cs" />
@@ -114,6 +116,8 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Material\Master02\（法师）开放性项目素材.atlas.txt" />
+    <None Include="Assets\Materials\LightSH.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />

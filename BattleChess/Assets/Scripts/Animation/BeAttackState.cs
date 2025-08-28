@@ -10,6 +10,7 @@ public class BeAttackState : State
 
     public override void Enter()
     {
+        SetSpineAnim("hit animation", false);
         base.Enter();
     }
 

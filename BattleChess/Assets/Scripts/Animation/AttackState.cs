@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AttackState : State
@@ -10,6 +11,7 @@ public class AttackState : State
 
     public override void Enter()
     {
+        SetSpineAnim("attack animation", false);
         base.Enter();
     }
 
@@ -17,7 +19,6 @@ public class AttackState : State
     {
         base.Exit();
     }
-
     public override void update()
     {
         base.update();
